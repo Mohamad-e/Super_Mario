@@ -68,22 +68,95 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //attacking
-        if (Input.GetKeyDown(KeyCode.K) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.K))
         {
             animator.SetTrigger("attacking");
+            List<RaycastHit2D> hits = new List<RaycastHit2D>();
+            if (facingRight)
+            {
+                Vector3 startArea = this.transform.position + 0.3f * Vector3.up + 0.5f * Vector3.right;
+                hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.0f));
+                Debug.DrawRay(startArea, Vector3.right * 1.0f, Color.white, 10.0f);
+
+                startArea = this.transform.position + 0.0f * Vector3.up + 0.5f * Vector3.right;
+                hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.1f));
+                Debug.DrawRay(startArea, Vector3.right * 1.1f, Color.white, 10.0f);
+
+                startArea = this.transform.position + (-0.3f) * Vector3.up + 0.5f * Vector3.right;
+                Debug.Log(startArea);
+                Debug.Log(Vector3.right);
+                hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.2f));
+                Debug.DrawRay(startArea, Vector3.right * 1.2f, Color.white, 10.0f);
+
+                startArea = this.transform.position + (-0.6f) * Vector3.up + 0.5f * Vector3.right;
+                hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.3f));
+                Debug.DrawRay(startArea, Vector3.right * 1.3f, Color.white, 10.0f);
+
+                startArea = this.transform.position + (-0.9f) * Vector3.up + 0.5f * Vector3.right;
+                hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.3f));
+                Debug.DrawRay(startArea, Vector3.right * 1.3f, Color.white, 10.0f);
+            }
+            else
+            {
+                Vector3 startArea = this.transform.position + 0.3f * Vector3.up - 0.5f * Vector3.right;
+                hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.0f));
+                Debug.DrawRay(startArea, -Vector3.right * 1.0f, Color.white, 10.0f);
+
+                startArea = this.transform.position + 0.0f * Vector3.up - 0.5f * Vector3.right;
+                hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.1f));
+                Debug.DrawRay(startArea, -Vector3.right * 1.1f, Color.white, 10.0f);
+
+                startArea = this.transform.position + (-0.3f) * Vector3.up - 0.5f * Vector3.right;
+                hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.2f));
+                Debug.DrawRay(startArea, -Vector3.right * 1.2f, Color.white, 10.0f);
+
+                startArea = this.transform.position + (-0.6f) * Vector3.up - 0.5f * Vector3.right;
+                hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.3f));
+                Debug.DrawRay(startArea, -Vector3.right * 1.3f, Color.white, 10.0f);
+
+                startArea = this.transform.position + (-0.9f) * Vector3.up - 0.5f * Vector3.right;
+                hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.3f));
+                Debug.DrawRay(startArea, -Vector3.right * 1.3f, Color.white, 10.0f);
+            }
+
+            for (int i = 0; i < 5; ++i)
+            {
+                if (hits[i].collider == null)
+                {
+                    Debug.Log("No Hit");
+                }
+                else if (hits[i].collider.tag == "Enemy")
+                {
+                    Debug.Log("Hit enemy");
+
+                }
+                else
+                {
+                    Debug.Log("Hit no enemy");
+                }
+            }
+            hits = new List<RaycastHit2D>();
         }
 
         //jumpAttack
-        if (Input.GetKeyDown(KeyCode.K) && !isGrounded)
+        /*if (Input.GetKeyDown(KeyCode.K) && !isGrounded)
         {
             animator.SetTrigger("attacking");
-        }
+        }*/
 
         //dashing
         if (Input.GetKey(KeyCode.L) && isGrounded)
         {
             animator.SetTrigger("dashing");
-            //rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+            if (facingRight)
+            {
+                rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+            }
+            else
+            {
+                rb.velocity = new Vector2(transform.localScale.x * (-dashingPower), 0f);
+            }
+            
         }
 
         //blocking
