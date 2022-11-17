@@ -1,26 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D rb;
     private Vector3 mVelocity = Vector3.zero;
 
-
+    //Player Movement
     private float speed = 3f;
+    private float horizontalMove;
     private float jumpForce = 7;
-
     private float dashingPower = 6;
-
     private bool doubleJump = true;
     private bool isGrounded = true;
     private bool facingRight = true;
 
+    //animator Object
     public Animator animator;
 
+    //Fireball
     public GameObject fireball;
     public Transform fireballSpawn;
+
+    //PlayerStats
+
+    //Player Mana
+    public const float maxMana = 100;
+    public float mana = maxMana;
 
     // Start is called before the first frame update
     void Start()
@@ -32,9 +40,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         //Player Movement
-        float horizontalMove = Input.GetAxis("Horizontal") * speed;
-        //transform.Translate(horizontalMove * Time.deltaTime, 0, 0);
-        
+        horizontalMove = Input.GetAxis("Horizontal") * speed;
         Vector3 targetVelocity = new Vector2(horizontalMove, rb.velocity.y);
         rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref mVelocity, .05f);
         animator.SetFloat("speed", Mathf.Abs(horizontalMove));
@@ -48,8 +54,26 @@ public class PlayerMovement : MonoBehaviour
         {
             flip();
         }
+
+        //sprinting
+        if (Input.GetKey(KeyCode.E) && isGrounded)
+        {
+            rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity*2f, ref mVelocity, .05f);
+        }
+
         
-        
+        //crouching
+        if(Input.GetKey(KeyCode.S) && isGrounded)
+        {
+            animator.SetBool("crouching", true);
+            speed = 0;
+        } 
+        else if(Input.GetKeyUp(KeyCode.S) && isGrounded)
+        {
+            animator.SetBool("crouching", false);
+            speed = 3f;
+        }
+
         //Jumping
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
@@ -177,7 +201,7 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.SetBool("jumping", false);
         }
-            
+        healthManager();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -190,5 +214,45 @@ public class PlayerMovement : MonoBehaviour
     {
         facingRight = !facingRight;
         transform.Rotate(0f, 180f, 0f);
+    }
+
+    //current Player health
+    public int health = 3;
+
+    //maximum lives a player can have
+    public int numberOfLives = 3;
+
+    //images of lives
+    public Image[] lives;
+    public Sprite fullPotion;
+    public Sprite emptyPotion;
+    //manage health
+    private void healthManager()
+    {
+        //check if player would exceed live limit
+        if (health > numberOfLives)
+            health = numberOfLives;
+
+        //check current lives
+        for(int i = 0; i < lives.Length; i++)
+        {
+            if(i < health)
+            {
+                lives[i].sprite = fullPotion;
+            }
+            else
+            {
+                lives[i].sprite = emptyPotion;
+            }
+
+            if(i < numberOfLives)
+            {
+                lives[i].enabled = true;
+            }
+            else
+            {
+                lives[i].enabled = false;
+            }
+        }
     }
 }
