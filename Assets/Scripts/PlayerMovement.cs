@@ -11,11 +11,12 @@ public class PlayerMovement : MonoBehaviour
     private float speed = 3f;
     private float jumpForce = 7;
 
-    private float dashingPower = 6;
+    private float dashingPower = 15;
 
     private bool doubleJump = true;
     private bool isGrounded = true;
     private bool facingRight = true;
+    private bool isDashing = false;
 
     public Animator animator;
 
@@ -48,8 +49,7 @@ public class PlayerMovement : MonoBehaviour
         {
             flip();
         }
-        
-        
+
         //Jumping
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
@@ -71,71 +71,6 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.K))
         {
             animator.SetTrigger("attacking");
-            List<RaycastHit2D> hits = new List<RaycastHit2D>();
-            if (facingRight)
-            {
-                Vector3 startArea = this.transform.position + 0.3f * Vector3.up + 0.5f * Vector3.right;
-                hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.0f));
-                Debug.DrawRay(startArea, Vector3.right * 1.0f, Color.white, 10.0f);
-
-                startArea = this.transform.position + 0.0f * Vector3.up + 0.5f * Vector3.right;
-                hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.1f));
-                Debug.DrawRay(startArea, Vector3.right * 1.1f, Color.white, 10.0f);
-
-                startArea = this.transform.position + (-0.3f) * Vector3.up + 0.5f * Vector3.right;
-                Debug.Log(startArea);
-                Debug.Log(Vector3.right);
-                hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.2f));
-                Debug.DrawRay(startArea, Vector3.right * 1.2f, Color.white, 10.0f);
-
-                startArea = this.transform.position + (-0.6f) * Vector3.up + 0.5f * Vector3.right;
-                hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.3f));
-                Debug.DrawRay(startArea, Vector3.right * 1.3f, Color.white, 10.0f);
-
-                startArea = this.transform.position + (-0.9f) * Vector3.up + 0.5f * Vector3.right;
-                hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.3f));
-                Debug.DrawRay(startArea, Vector3.right * 1.3f, Color.white, 10.0f);
-            }
-            else
-            {
-                Vector3 startArea = this.transform.position + 0.3f * Vector3.up - 0.5f * Vector3.right;
-                hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.0f));
-                Debug.DrawRay(startArea, -Vector3.right * 1.0f, Color.white, 10.0f);
-
-                startArea = this.transform.position + 0.0f * Vector3.up - 0.5f * Vector3.right;
-                hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.1f));
-                Debug.DrawRay(startArea, -Vector3.right * 1.1f, Color.white, 10.0f);
-
-                startArea = this.transform.position + (-0.3f) * Vector3.up - 0.5f * Vector3.right;
-                hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.2f));
-                Debug.DrawRay(startArea, -Vector3.right * 1.2f, Color.white, 10.0f);
-
-                startArea = this.transform.position + (-0.6f) * Vector3.up - 0.5f * Vector3.right;
-                hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.3f));
-                Debug.DrawRay(startArea, -Vector3.right * 1.3f, Color.white, 10.0f);
-
-                startArea = this.transform.position + (-0.9f) * Vector3.up - 0.5f * Vector3.right;
-                hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.3f));
-                Debug.DrawRay(startArea, -Vector3.right * 1.3f, Color.white, 10.0f);
-            }
-
-            for (int i = 0; i < 5; ++i)
-            {
-                if (hits[i].collider == null)
-                {
-                    Debug.Log("No Hit");
-                }
-                else if (hits[i].collider.tag == "Enemy")
-                {
-                    Debug.Log("Hit enemy");
-
-                }
-                else
-                {
-                    Debug.Log("Hit no enemy");
-                }
-            }
-            hits = new List<RaycastHit2D>();
         }
 
         //jumpAttack
@@ -145,18 +80,20 @@ public class PlayerMovement : MonoBehaviour
         }*/
 
         //dashing
-        if (Input.GetKey(KeyCode.L) && isGrounded)
+        if (Input.GetKey(KeyCode.L) && isGrounded && !isDashing)
         {
             animator.SetTrigger("dashing");
+            isDashing = true;
             if (facingRight)
             {
-                rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+                //rb.velocity += new Vector2( dashingPower, 0f);
+                rb.AddForce(Vector2.right * dashingPower, ForceMode2D.Impulse);
             }
             else
             {
-                rb.velocity = new Vector2(transform.localScale.x * (-dashingPower), 0f);
+                //rb.velocity += new Vector2(-dashingPower, 0f);
+                rb.AddForce(-Vector2.right * dashingPower, ForceMode2D.Impulse);
             }
-            
         }
 
         //blocking
@@ -169,7 +106,9 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             animator.SetTrigger("fireball");
-            Instantiate(fireball, fireballSpawn.transform.position, transform.rotation);
+            List<Object> Objects = new List<Object>();
+            GameObject fireBall = Instantiate(fireball, fireballSpawn.transform.position, transform.rotation);
+            fireBall.SetActive(true);
         }
 
         //check if player touches ground
@@ -177,7 +116,6 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.SetBool("jumping", false);
         }
-            
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -190,5 +128,79 @@ public class PlayerMovement : MonoBehaviour
     {
         facingRight = !facingRight;
         transform.Rotate(0f, 180f, 0f);
+    }
+
+    private void attackArea()
+    {
+        List<RaycastHit2D> hits = new List<RaycastHit2D>();
+        if (facingRight)
+        {
+            Vector3 startArea = this.transform.position + 0.3f * Vector3.up + 0.5f * Vector3.right;
+            hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.0f));
+            Debug.DrawRay(startArea, Vector3.right * 1.0f, Color.white, 10.0f);
+
+            startArea = this.transform.position + 0.0f * Vector3.up + 0.5f * Vector3.right;
+            hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.1f));
+            Debug.DrawRay(startArea, Vector3.right * 1.1f, Color.white, 10.0f);
+
+            startArea = this.transform.position + (-0.3f) * Vector3.up + 0.5f * Vector3.right;
+            Debug.Log(startArea);
+            Debug.Log(Vector3.right);
+            hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.2f));
+            Debug.DrawRay(startArea, Vector3.right * 1.2f, Color.white, 10.0f);
+
+            startArea = this.transform.position + (-0.6f) * Vector3.up + 0.5f * Vector3.right;
+            hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.3f));
+            Debug.DrawRay(startArea, Vector3.right * 1.3f, Color.white, 10.0f);
+
+            startArea = this.transform.position + (-0.9f) * Vector3.up + 0.5f * Vector3.right;
+            hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.3f));
+            Debug.DrawRay(startArea, Vector3.right * 1.3f, Color.white, 10.0f);
+        }
+        else
+        {
+            Vector3 startArea = this.transform.position + 0.3f * Vector3.up - 0.5f * Vector3.right;
+            hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.0f));
+            Debug.DrawRay(startArea, -Vector3.right * 1.0f, Color.white, 10.0f);
+
+            startArea = this.transform.position + 0.0f * Vector3.up - 0.5f * Vector3.right;
+            hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.1f));
+            Debug.DrawRay(startArea, -Vector3.right * 1.1f, Color.white, 10.0f);
+
+            startArea = this.transform.position + (-0.3f) * Vector3.up - 0.5f * Vector3.right;
+            hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.2f));
+            Debug.DrawRay(startArea, -Vector3.right * 1.2f, Color.white, 10.0f);
+
+            startArea = this.transform.position + (-0.6f) * Vector3.up - 0.5f * Vector3.right;
+            hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.3f));
+            Debug.DrawRay(startArea, -Vector3.right * 1.3f, Color.white, 10.0f);
+
+            startArea = this.transform.position + (-0.9f) * Vector3.up - 0.5f * Vector3.right;
+            hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.3f));
+            Debug.DrawRay(startArea, -Vector3.right * 1.3f, Color.white, 10.0f);
+        }
+        List<Collider2D> objectsHit = new List<Collider2D>();
+        for (int i = 0; i < 5; ++i)
+        {
+            if (hits[i].collider == null)
+            {
+                Debug.Log("No Hit");
+            }
+            else if (hits[i].collider.tag == "Enemy")
+            {
+                Debug.Log("Hit enemy");
+                objectsHit.Add(hits[i].collider);
+            }
+            else
+            {
+                Debug.Log("Hit no enemy");
+            }
+        }
+        hits = new List<RaycastHit2D>();
+    }
+
+    private void notDashing()
+    {
+        isDashing = false;
     }
 }

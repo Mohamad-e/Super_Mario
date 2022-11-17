@@ -27,7 +27,6 @@ public class Movement : MonoBehaviour
         animator.SetBool("Attack", false);
         animator.SetBool("In_Air", false);
 
-
         //Debug.Log(Input.GetAxis("Horizontal"));
         float h = Input.GetAxis("Horizontal") * speed;
         animator.SetFloat("Velocity", h);
