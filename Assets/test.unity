@@ -791,7 +791,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 1000
-  fireballDamage: 50
 --- !u!1 &2061481327
 GameObject:
   m_ObjectHideFlags: 0
@@ -891,6 +890,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5bfddb7b8cb4a1458e96747f0fc4600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fireballDamage: 100
 --- !u!60 &2061481331
 PolygonCollider2D:
   m_ObjectHideFlags: 0
