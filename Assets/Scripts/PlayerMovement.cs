@@ -26,6 +26,10 @@ public class PlayerMovement : MonoBehaviour
 
     //PlayerStats
 
+    //Player Mana
+    public const float maxMana = 100;
+    public float mana = maxMana;
+
     // Start is called before the first frame update
     void Start()
     {
