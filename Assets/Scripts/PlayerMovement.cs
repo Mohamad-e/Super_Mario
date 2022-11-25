@@ -32,12 +32,6 @@ public class PlayerMovement : MonoBehaviour
     public GameObject fireball;
     public Transform fireballSpawn;
 
-    //PlayerStats
-
-    //Player Mana
-    public const float maxMana = 100;
-    public float mana = maxMana;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -162,7 +156,6 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.SetBool("jumping", false);
         }
-        healthManager();
 
     }
 
@@ -273,47 +266,5 @@ public class PlayerMovement : MonoBehaviour
         //List<Object> Objects = new List<Object>();
         GameObject fireBall = Instantiate(fireball, fireballSpawn.transform.position, transform.rotation);
         fireBall.SetActive(true);
-    }
-
-
-
-    //current Player health
-    public int health = 3;
-
-    //maximum lives a player can have
-    public int numberOfLives = 3;
-
-    //images of lives
-    public Image[] lives;
-    public Sprite fullPotion;
-    public Sprite emptyPotion;
-    //manage health
-    private void healthManager()
-    {
-        //check if player would exceed live limit
-        if (health > numberOfLives)
-            health = numberOfLives;
-
-        //check current lives
-        for(int i = 0; i < lives.Length; i++)
-        {
-            if(i < health)
-            {
-                lives[i].sprite = fullPotion;
-            }
-            else
-            {
-                lives[i].sprite = emptyPotion;
-            }
-
-            if(i < numberOfLives)
-            {
-                lives[i].enabled = true;
-            }
-            else
-            {
-                lives[i].enabled = false;
-            }
-        }
     }
 }
