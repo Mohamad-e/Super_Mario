@@ -13,12 +13,17 @@ public class PlayerMovement : MonoBehaviour
     private float horizontalMove;
     private float jumpForce = 7;
     
+    [SerializeField]
     private float dashingPower = 6;
 
     private bool doubleJump = true;
     private bool isGrounded = true;
     private bool facingRight = true;
     private bool isDashing = false;
+    private bool isCrouching = false;
+    private bool isAttacking = false;
+    private bool isStriking = false;
+    private bool isFireballing = false;
 
     //animator Object
     public Animator animator;
@@ -67,20 +72,22 @@ public class PlayerMovement : MonoBehaviour
 
         
         //crouching
-        if(Input.GetKey(KeyCode.S) && isGrounded)
+        if(Input.GetKeyDown(KeyCode.S) && isGrounded && !isAttacking && !isDashing && !isStriking && !isFireballing)
         {
             animator.SetBool("crouching", true);
             speed = 0;
+            isCrouching = true;
         } 
         else if(Input.GetKeyUp(KeyCode.S) && isGrounded)
         {
             animator.SetBool("crouching", false);
             speed = 3f;
+            isCrouching = false;
         }
 
 
         //Jumping
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !isCrouching && !isDashing )
         {
             isGrounded = false;
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
@@ -88,7 +95,7 @@ public class PlayerMovement : MonoBehaviour
             doubleJump = true;
         }
         //double Jump
-        else if(Input.GetKeyDown(KeyCode.Space) && doubleJump)
+        else if(Input.GetKeyDown(KeyCode.Space) && doubleJump && !isCrouching)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
@@ -97,9 +104,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //attacking
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K) && !isDashing && !isAttacking && !isCrouching && !isFireballing && !isStriking)
         {
             animator.SetTrigger("attacking");
+            isAttacking = true;
         }
 
         //jumpAttack
@@ -109,7 +117,7 @@ public class PlayerMovement : MonoBehaviour
         }*/
 
         //dashing
-        if (Input.GetKey(KeyCode.L) && isGrounded && !isDashing)
+        if (Input.GetKeyDown(KeyCode.L) && isGrounded && !isDashing && !isAttacking && !isStriking && !isCrouching && !isFireballing)
         {
             animator.SetTrigger("dashing");
             isDashing = true;
@@ -132,12 +140,21 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //fireball
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F) && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing)
         {
             animator.SetTrigger("fireball");
-            List<Object> Objects = new List<Object>();
+            isFireballing = true;
+            /*//List<Object> Objects = new List<Object>();
             GameObject fireBall = Instantiate(fireball, fireballSpawn.transform.position, transform.rotation);
             fireBall.SetActive(true);
+            isFireballing = true;*/
+        }
+
+        //striking
+        if (Input.GetKeyDown(KeyCode.J) && isGrounded && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing)
+        {
+            animator.SetTrigger("striking");
+            isStriking = true;
         }
 
         //check if player touches ground
@@ -161,7 +178,7 @@ public class PlayerMovement : MonoBehaviour
         transform.Rotate(0f, 180f, 0f);
     }
 
-/*
+
     private void attackArea()
     {
         List<RaycastHit2D> hits = new List<RaycastHit2D>();
@@ -231,10 +248,34 @@ public class PlayerMovement : MonoBehaviour
         hits = new List<RaycastHit2D>();
     }
 
-    private void notDashing()
+    private void endAttacking()
+    {
+        isAttacking = false;
+    }
+
+    private void endDashing()
     {
         isDashing = false;
-*/
+    }
+
+    private void endStriking()
+    {
+        isStriking = false;
+    }
+
+    private void endFireballing()
+    {
+        isFireballing = false;
+    }
+
+    private void fireballing()
+    {
+        //List<Object> Objects = new List<Object>();
+        GameObject fireBall = Instantiate(fireball, fireballSpawn.transform.position, transform.rotation);
+        fireBall.SetActive(true);
+    }
+
+
 
     //current Player health
     public int health = 3;
