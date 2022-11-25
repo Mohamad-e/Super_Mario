@@ -18,6 +18,7 @@ public class enemy : MonoBehaviour
         if(health <= 0)
         {
             Destroy(gameObject);
+            GameObject.Find("Player").GetComponent<PlayerStats>().currentExperience += 20; 
         }
     }
 }

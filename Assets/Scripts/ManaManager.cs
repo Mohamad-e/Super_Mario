@@ -14,6 +14,6 @@ public class ManaManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        manaBar.fillAmount = GameObject.Find("Player").GetComponent<PlayerMovement>().mana / PlayerMovement.maxMana;
+        manaBar.fillAmount = GameObject.Find("Player").GetComponent<PlayerStats>().mana / PlayerStats.maxMana;
     }
 }
