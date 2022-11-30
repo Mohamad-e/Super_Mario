@@ -28,7 +28,8 @@ public class PlayerStats : MonoBehaviour
     private int playerArmor = 1;
     private int playerIntelligence = 1;
 
-
+    //Player Status
+    private bool dizzy = false;
     private void Update()
     {
         healthManager();
