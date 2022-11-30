@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -24,6 +26,12 @@ public class PlayerMovement : MonoBehaviour
     private bool isAttacking = false;
     private bool isStriking = false;
     private bool isFireballing = false;
+    private bool isParrying = false;
+    private bool blockReady = false;
+    private bool isBlocking = false;
+
+    //Player Status
+    public bool dizzy = false;
 
     //animator Object
     public Animator animator;
@@ -41,6 +49,12 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //death
+        if(this.gameObject.GetComponent<PlayerStats>().health <= 0)
+        {
+            animator.SetBool("dead", true);
+        }
+
         //Player Movement
         horizontalMove = Input.GetAxis("Horizontal") * speed;
         Vector3 targetVelocity = new Vector2(horizontalMove, rb.velocity.y);
@@ -66,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
 
         
         //crouching
-        if(Input.GetKeyDown(KeyCode.S) && isGrounded && !isAttacking && !isDashing && !isStriking && !isFireballing)
+        if(Input.GetKeyDown(KeyCode.S) && isGrounded && !isAttacking && !isDashing && !isStriking && !isFireballing && !isBlocking && !blockReady)
         {
             animator.SetBool("crouching", true);
             speed = 0;
@@ -81,15 +95,15 @@ public class PlayerMovement : MonoBehaviour
 
 
         //Jumping
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !isCrouching && !isDashing )
-        {
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !isCrouching && !isDashing && !isBlocking && !blockReady)
+        { 
             isGrounded = false;
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             animator.SetBool("jumping", true);
             doubleJump = true;
         }
         //double Jump
-        else if(Input.GetKeyDown(KeyCode.Space) && doubleJump && !isCrouching)
+        else if(Input.GetKeyDown(KeyCode.Space) && doubleJump && !isCrouching && !isBlocking && !blockReady)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
@@ -98,7 +112,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //attacking
-        if (Input.GetKeyDown(KeyCode.K) && !isDashing && !isAttacking && !isCrouching && !isFireballing && !isStriking)
+        if (Input.GetKeyDown(KeyCode.K) && !isDashing && !isAttacking && !isCrouching && !isFireballing && !isStriking && !isBlocking && !blockReady)
         {
             animator.SetTrigger("attacking");
             isAttacking = true;
@@ -111,7 +125,7 @@ public class PlayerMovement : MonoBehaviour
         }*/
 
         //dashing
-        if (Input.GetKeyDown(KeyCode.L) && isGrounded && !isDashing && !isAttacking && !isStriking && !isCrouching && !isFireballing)
+        if (Input.GetKeyDown(KeyCode.L) && isGrounded && !isDashing && !isAttacking && !isStriking && !isCrouching && !isFireballing && !isBlocking && !blockReady)
         {
             animator.SetTrigger("dashing");
             isDashing = true;
@@ -127,14 +141,29 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        //blocking
-        if(Input.GetKeyDown(KeyCode.B))
+        //parrying + blocking
+        if(Input.GetKeyDown(KeyCode.B) && !isDashing && !isAttacking && !isStriking && !isCrouching && !isFireballing && !isParrying)
         {
-            animator.SetTrigger("blocking");
+            animator.SetTrigger("parrying");
+            isParrying = true;
+            
+        }
+        if (Input.GetKey(KeyCode.B) && blockReady && isGrounded)
+        {
+            animator.SetBool("blocking", true);
+            isBlocking = true;
+            speed = 1f;
+        }
+        else
+        {
+            animator.SetBool("blocking", false);
+            isBlocking = false;
+            blockReady = false;
+            speed = 3f;
         }
 
         //fireball
-        if (Input.GetKeyDown(KeyCode.F) && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing)
+        if (Input.GetKeyDown(KeyCode.F) && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing && !isParrying && !isBlocking && !blockReady)
         {
             animator.SetTrigger("fireball");
             isFireballing = true;
@@ -145,18 +174,24 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //striking
-        if (Input.GetKeyDown(KeyCode.J) && isGrounded && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing)
+        if (Input.GetKeyDown(KeyCode.J) && isGrounded && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing && !isBlocking && !blockReady)
         {
             animator.SetTrigger("striking");
             isStriking = true;
         }
+
+        if (dizzy == true)
+        {
+            animator.SetTrigger("dizzy");
+            dizzy = false;
+        }
+
 
         //check if player touches ground
         if (isGrounded)
         {
             animator.SetBool("jumping", false);
         }
-
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -261,10 +296,21 @@ public class PlayerMovement : MonoBehaviour
         isFireballing = false;
     }
 
+    private void endParrying()
+    {
+        isParrying = false;
+        blockReady = true;
+    }
+
     private void fireballing()
     {
         //List<Object> Objects = new List<Object>();
         GameObject fireBall = Instantiate(fireball, fireballSpawn.transform.position, transform.rotation);
         fireBall.SetActive(true);
+    }
+
+    private void resetGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

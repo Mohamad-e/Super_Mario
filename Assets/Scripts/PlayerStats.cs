@@ -41,6 +41,10 @@ public class PlayerStats : MonoBehaviour
     private int playerArmor = 1;
     private int playerIntelligence = 1;
 
+
+    //Player Status
+    private bool dizzy = false;
+
     //texts
     public TMP_Text playerLevelText;
     public TMP_Text healthText;
@@ -62,6 +66,7 @@ public class PlayerStats : MonoBehaviour
         intelligenceButton.gameObject.SetActive(false);
 
     }
+
 
     private void Update()
     {
