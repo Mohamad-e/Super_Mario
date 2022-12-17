@@ -6,10 +6,13 @@ public class enemy : MonoBehaviour
 {
     public int health = 1000;
 
+    public GameObject fireball;
+    public Transform fireballSpawn;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        InvokeRepeating("testProjectiles", 2.0f, 5.0f);
     }
 
     // Update is called once per frame
@@ -20,5 +23,11 @@ public class enemy : MonoBehaviour
             Destroy(gameObject);
             GameObject.Find("Player").GetComponent<PlayerStats>().currentExperience += 20; 
         }
+    }
+
+    private void testProjectiles()
+    {
+        Instantiate(fireball, this.gameObject.transform.position, this.gameObject.transform.rotation).SetActive(true) ;
+        GameObject fireBall = Instantiate(fireball, fireballSpawn.transform.position, transform.rotation);
     }
 }

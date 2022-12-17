@@ -6,7 +6,7 @@ public class Fireball : MonoBehaviour
 {
     private float speed = 20;
     [SerializeField]
-    private int fireballDamage = 10;
+    private int fireballDamage = 100;
     // Update is called once per frame
     void Update()
     {
