@@ -28,12 +28,12 @@ public class FireballDragon : MonoBehaviour
         else if (collision.collider.GetComponent<PlayerMovement>().isBlocking)
         {
             Debug.Log("Blocked");
-            collision.collider.GetComponent<PlayerStats>().health -= fireballDamage;
+            collision.collider.GetComponent<PlayerStats>().currentHealth -= fireballDamage;
         }
         else
         {
             Debug.Log("neither Parried nor Blocked");
-            collision.collider.GetComponent<PlayerStats>().health -= fireballDamage;
+            collision.collider.GetComponent<PlayerStats>().currentHealth -= fireballDamage;
         }
         Destroy(gameObject);
     }

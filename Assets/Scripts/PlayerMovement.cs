@@ -390,17 +390,17 @@ public class PlayerMovement : MonoBehaviour
             if (hitPoint.point.x > this.transform.position.x + 1 && facingRight)
             {
                 //play animation for succesful blocking
-                this.gameObject.GetComponent<PlayerStats>().health -= (int)(dmg*blockingFactor);
+                this.gameObject.GetComponent<PlayerStats>().currentHealth -= (int)(dmg*blockingFactor);
             }
             else if (hitPoint.point.x < this.transform.position.x - 1 && !facingRight)
             {
                 //play animation for succesful blocking
-                this.gameObject.GetComponent<PlayerStats>().health -= (int)(dmg * blockingFactor);
+                this.gameObject.GetComponent<PlayerStats>().currentHealth -= (int)(dmg * blockingFactor);
             }
         }
         else
         {
-            this.gameObject.GetComponent<PlayerStats>().health -= (int)(dmg);
+            this.gameObject.GetComponent<PlayerStats>().currentHealth -= (int)(dmg);
         }
     }
 
