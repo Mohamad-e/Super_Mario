@@ -61,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         //death
-        if(this.gameObject.GetComponent<PlayerStats>().health <= 0)
+        if(this.gameObject.GetComponent<PlayerStats>().currentHealth <= 0)
         {
             animator.SetBool("dead", true);
         }

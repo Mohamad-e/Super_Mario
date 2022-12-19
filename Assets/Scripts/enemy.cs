@@ -9,6 +9,7 @@ public class enemy : MonoBehaviour
     public GameObject fireball;
     public Transform fireballSpawn;
 
+    public int experience;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +22,7 @@ public class enemy : MonoBehaviour
         if(health <= 0)
         {
             Destroy(gameObject);
-            GameObject.Find("Player").GetComponent<PlayerStats>().currentExperience += 20; 
+            GameObject.Find("Player").GetComponent<PlayerStats>().currentExperience += experience; 
         }
     }
 

@@ -14,16 +14,9 @@ public class PlayerStats : MonoBehaviour
     public Button armorButton;
     public Button intelligenceButton;
 
-    //current Player health
-    public int health = 3;
-
-    //maximum lives a player can have
-    public int numberOfLives = 3;
-
-    //images of lives
-    public Image[] lives;
-    public Sprite fullPotion;
-    public Sprite emptyPotion;
+    //Player health
+    public float currentHealth = 100;
+    public float maxHealth = 100;
 
     //Player Mana
     public float maxMana = 100;
@@ -41,9 +34,6 @@ public class PlayerStats : MonoBehaviour
     public int playerArmor = 1;
     public int playerIntelligence = 1;
 
-
-    //Player Status
-    private bool dizzy = false;
 
     //texts
     public TMP_Text playerLevelText;
@@ -73,40 +63,9 @@ public class PlayerStats : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             statsMenu.enabled = !statsMenu.enabled;
 
-        healthManager();
         checkLevelUp();
         checkAttributes();
 
-    }
-
-    //manage health
-    private void healthManager()
-    {
-        //check if player would exceed live limit
-        if (health > numberOfLives)
-            health = numberOfLives;
-
-        //check current lives
-        for (int i = 0; i < lives.Length; i++)
-        {
-            if (i < health)
-            {
-                lives[i].sprite = fullPotion;
-            }
-            else
-            {
-                lives[i].sprite = emptyPotion;
-            }
-
-            if (i < numberOfLives)
-            {
-                lives[i].enabled = true;
-            }
-            else
-            {
-                lives[i].enabled = false;
-            }
-        }
     }
 
     private void checkLevelUp()
@@ -126,8 +85,7 @@ public class PlayerStats : MonoBehaviour
             if(playerLevel % 5 == 0)
             {
                 specialAttributePoints++;
-            }
-            
+            }  
             updateStats();
         }
     }
@@ -155,7 +113,7 @@ public class PlayerStats : MonoBehaviour
 
     public void incrHealth()
     {
-        numberOfLives++;
+        maxHealth += 10;
         specialAttributePoints--;
         updateStats();
     }
@@ -170,7 +128,7 @@ public class PlayerStats : MonoBehaviour
     private void updateStats()
     {
         playerLevelText.text = playerLevel.ToString();
-        healthText.text = numberOfLives.ToString();
+        healthText.text = maxHealth.ToString();
         manaText.text = maxMana.ToString();
         strengthText.text = playerStrength.ToString();
         armorText.text = playerArmor.ToString();
