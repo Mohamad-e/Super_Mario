@@ -11,12 +11,19 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 mVelocity = Vector3.zero;
 
     //Player Movement
+    [SerializeField]
     private float speed = 3f;
     private float horizontalMove;
     private float jumpForce = 7;
     
     [SerializeField]
-    private float dashingPower = 6;
+    private float dashingPower = 6f;
+    [SerializeField]
+    private float attackStrength = 10f;
+    [SerializeField]
+    private float strikeStrength = 30f;
+    [SerializeField]
+    private float blockingFactor = 0.3f;
 
     private bool doubleJump = true;
     private bool isGrounded = true;
@@ -27,8 +34,12 @@ public class PlayerMovement : MonoBehaviour
     private bool isStriking = false;
     private bool isFireballing = false;
     private bool isParrying = false;
+    public bool parryFrameAcive = false;
     private bool blockReady = false;
-    private bool isBlocking = false;
+    public bool isBlocking = false;
+
+    
+    
 
     //Player Status
     public bool dizzy = false;
@@ -73,20 +84,26 @@ public class PlayerMovement : MonoBehaviour
 
 
         //sprinting
-        if (Input.GetKey(KeyCode.E) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.E) && isGrounded && !isCrouching && !isParrying && !isBlocking)
         {
-            rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity*2f, ref mVelocity, .05f);
+            speed = 10f;
+            //Debug.Log("sprinting");
+            //rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity*2f, ref mVelocity, .05f);
+        }else if(Input.GetKeyUp(KeyCode.E) && !isCrouching && !isParrying && !isBlocking)
+        {
+            //Debug.Log("stop sprinting");
+            speed = 3f;
         }
 
         
         //crouching
-        if(Input.GetKeyDown(KeyCode.S) && isGrounded && !isAttacking && !isDashing && !isStriking && !isFireballing && !isBlocking && !blockReady)
+        if(Input.GetKeyDown(KeyCode.S) && isGrounded && !isAttacking && !isDashing && !isStriking && !isFireballing && !isBlocking && !blockReady && !isParrying)
         {
             animator.SetBool("crouching", true);
             speed = 0;
             isCrouching = true;
         } 
-        else if(Input.GetKeyUp(KeyCode.S) && isGrounded)
+        else if(Input.GetKeyUp(KeyCode.S) && isGrounded && !isAttacking && !isDashing && !isStriking && !isFireballing && !isBlocking && !blockReady && !isParrying)
         {
             animator.SetBool("crouching", false);
             speed = 3f;
@@ -112,7 +129,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //attacking
-        if (Input.GetKeyDown(KeyCode.K) && !isDashing && !isAttacking && !isCrouching && !isFireballing && !isStriking && !isBlocking && !blockReady)
+        if (Input.GetKeyDown(KeyCode.K) && !isDashing && !isAttacking && !isCrouching && !isFireballing && !isStriking && !isBlocking && !blockReady &&  !isParrying)
         {
             animator.SetTrigger("attacking");
             isAttacking = true;
@@ -154,7 +171,7 @@ public class PlayerMovement : MonoBehaviour
             isBlocking = true;
             speed = 1f;
         }
-        else
+        else if(Input.GetKeyUp(KeyCode.B) && !isCrouching && !isFireballing && !isParrying)
         {
             animator.SetBool("blocking", false);
             isBlocking = false;
@@ -209,71 +226,182 @@ public class PlayerMovement : MonoBehaviour
 
     private void attackArea()
     {
-        List<RaycastHit2D> hits = new List<RaycastHit2D>();
+        List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>();
         if (facingRight)
         {
             Vector3 startArea = this.transform.position + 0.3f * Vector3.up + 0.5f * Vector3.right;
-            hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.0f));
+            hits.Add(Physics2D.RaycastAll(startArea, Vector3.right, 1.0f));
             Debug.DrawRay(startArea, Vector3.right * 1.0f, Color.white, 10.0f);
 
             startArea = this.transform.position + 0.0f * Vector3.up + 0.5f * Vector3.right;
-            hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.1f));
+            hits.Add(Physics2D.RaycastAll(startArea, Vector3.right, 1.1f));
             Debug.DrawRay(startArea, Vector3.right * 1.1f, Color.white, 10.0f);
 
             startArea = this.transform.position + (-0.3f) * Vector3.up + 0.5f * Vector3.right;
-            Debug.Log(startArea);
-            Debug.Log(Vector3.right);
-            hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.2f));
+            //Debug.Log(startArea);
+            //Debug.Log(Vector3.right);
+            hits.Add(Physics2D.RaycastAll(startArea, Vector3.right, 1.2f));
             Debug.DrawRay(startArea, Vector3.right * 1.2f, Color.white, 10.0f);
 
             startArea = this.transform.position + (-0.6f) * Vector3.up + 0.5f * Vector3.right;
-            hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.3f));
+            hits.Add(Physics2D.RaycastAll(startArea, Vector3.right, 1.3f));
             Debug.DrawRay(startArea, Vector3.right * 1.3f, Color.white, 10.0f);
 
             startArea = this.transform.position + (-0.9f) * Vector3.up + 0.5f * Vector3.right;
-            hits.Add(Physics2D.Raycast(startArea, Vector3.right, 1.3f));
+            hits.Add(Physics2D.RaycastAll(startArea, Vector3.right, 1.3f));
             Debug.DrawRay(startArea, Vector3.right * 1.3f, Color.white, 10.0f);
         }
         else
         {
             Vector3 startArea = this.transform.position + 0.3f * Vector3.up - 0.5f * Vector3.right;
-            hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.0f));
+            hits.Add(Physics2D.RaycastAll(startArea, -Vector3.right, 1.0f));
             Debug.DrawRay(startArea, -Vector3.right * 1.0f, Color.white, 10.0f);
 
             startArea = this.transform.position + 0.0f * Vector3.up - 0.5f * Vector3.right;
-            hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.1f));
+            hits.Add(Physics2D.RaycastAll(startArea, -Vector3.right, 1.1f));
             Debug.DrawRay(startArea, -Vector3.right * 1.1f, Color.white, 10.0f);
 
             startArea = this.transform.position + (-0.3f) * Vector3.up - 0.5f * Vector3.right;
-            hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.2f));
+            hits.Add(Physics2D.RaycastAll(startArea, -Vector3.right, 1.2f));
             Debug.DrawRay(startArea, -Vector3.right * 1.2f, Color.white, 10.0f);
 
             startArea = this.transform.position + (-0.6f) * Vector3.up - 0.5f * Vector3.right;
-            hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.3f));
+            hits.Add(Physics2D.RaycastAll(startArea, -Vector3.right, 1.3f));
             Debug.DrawRay(startArea, -Vector3.right * 1.3f, Color.white, 10.0f);
 
             startArea = this.transform.position + (-0.9f) * Vector3.up - 0.5f * Vector3.right;
-            hits.Add(Physics2D.Raycast(startArea, -Vector3.right, 1.3f));
+            hits.Add(Physics2D.RaycastAll(startArea, -Vector3.right, 1.3f));
             Debug.DrawRay(startArea, -Vector3.right * 1.3f, Color.white, 10.0f);
         }
         List<Collider2D> objectsHit = new List<Collider2D>();
         for (int i = 0; i < 5; ++i)
         {
-            if (hits[i].collider == null)
+            //Debug.Log(hits[i].Length);
+            for (int j = 0; j < hits[i].Length; j++)
             {
-                Debug.Log("No Hit");
-            }
-            else if (hits[i].collider.tag == "Enemy")
-            {
-                Debug.Log("Hit enemy");
-                objectsHit.Add(hits[i].collider);
-            }
-            else
-            {
-                Debug.Log("Hit no enemy");
+                if (hits[i][j].collider == null)
+                {
+                    //Debug.Log("No Hit");
+                }
+                else if (hits[i][j].collider.tag == "Enemy")    
+                {
+                    //Debug.Log("Hit enemy");
+                    if (!objectsHit.Contains(hits[i][j].collider))
+                    {
+                        objectsHit.Add(hits[i][j].collider);
+                        hits[i][j].collider.GetComponent<enemy>().health -= (int)((float)(attackStrength)); // + this.gameObject.GetComponent<PlayerStats>().playerStrength 
+                    }
+                    //Debug.Log(hits[i][j].collider.name);
+                }
+                else
+                {
+                    //Debug.Log("Hit no enemy");
+                }
             }
         }
-        hits = new List<RaycastHit2D>();
+        objectsHit = new List<Collider2D>();
+        hits = new List<RaycastHit2D[]>();
+    }
+
+    private void strikeArea()
+    {
+        List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>();
+        if (facingRight)
+        {
+            Vector3 startArea = this.transform.position + (-0.45f) * Vector3.up + 0.5f * Vector3.right;
+            hits.Add(Physics2D.RaycastAll(startArea, Vector3.right, 1.3f));
+            Debug.DrawRay(startArea, Vector3.right * 1.3f, Color.white, 10.0f);
+
+            startArea = this.transform.position + (-0.75f) * Vector3.up + 0.5f * Vector3.right;
+            hits.Add(Physics2D.RaycastAll(startArea, Vector3.right, 1.3f));
+            Debug.DrawRay(startArea, Vector3.right * 1.3f, Color.white, 10.0f);
+
+            startArea = this.transform.position + (-1.05f) * Vector3.up + 0.5f * Vector3.right;
+            hits.Add(Physics2D.RaycastAll(startArea, Vector3.right, 1.3f));
+            Debug.DrawRay(startArea, Vector3.right * 1.3f, Color.white, 10.0f);
+        }    
+        else
+        {
+            Vector3 startArea = this.transform.position + (-0.45f) * Vector3.up - 0.5f * Vector3.right;
+            hits.Add(Physics2D.RaycastAll(startArea, -Vector3.right, 1.3f));
+            Debug.DrawRay(startArea, -Vector3.right* 1.3f, Color.white, 10.0f);
+
+            startArea = this.transform.position + (-0.75f) * Vector3.up - 0.5f * Vector3.right;
+            hits.Add(Physics2D.RaycastAll(startArea, -Vector3.right, 1.3f));
+            Debug.DrawRay(startArea, -Vector3.right * 1.3f, Color.white, 10.0f);
+
+            startArea = this.transform.position + (-1.05f) * Vector3.up - 0.5f * Vector3.right;
+            hits.Add(Physics2D.RaycastAll(startArea, -Vector3.right, 1.3f));
+            Debug.DrawRay(startArea, -Vector3.right* 1.3f, Color.white, 10.0f);
+        }
+
+        List<Collider2D> objectsHit = new List<Collider2D>();
+
+        for (int i = 0; i < 3; ++i)
+        {
+            //Debug.Log(hits[i].Length);
+            for (int j = 0; j < hits[i].Length; j++)
+            {
+
+                if (hits[i][j].collider == null)
+                {
+                    //Debug.Log("No Hit");
+                }
+                else if (hits[i][j].collider.tag == "Enemy")
+                {
+
+                    //Debug.Log("Hit enemy");
+                    if (!objectsHit.Contains(hits[i][j].collider))
+                    {
+                        objectsHit.Add(hits[i][j].collider);
+                        hits[i][j].collider.GetComponent<enemy>().health -= (int)((float)(strikeStrength)); // + this.gameObject.GetComponent<PlayerStats>().playerStrength 
+                    }
+
+                    //Debug.Log(hits[i][j].collider.name);
+
+                }
+                else
+                {
+                    //Debug.Log("Hit no enemy");
+                }
+            }
+        }
+        objectsHit = new List<Collider2D>();
+        hits = new List<RaycastHit2D[]>();
+    }
+
+    public void applyDamage(float dmg, RaycastHit hitPoint)
+    {
+        if (parryFrameAcive)
+        {
+            if (hitPoint.point.x > this.transform.position.x + 1 && facingRight)
+            {
+
+                //play animation for succesful parrying
+                
+            }
+            else if(hitPoint.point.x < this.transform.position.x - 1 && !facingRight)
+            {
+                //play animation for succesful parrying
+            }
+        } 
+        else if(isBlocking)
+        {
+            if (hitPoint.point.x > this.transform.position.x + 1 && facingRight)
+            {
+                //play animation for succesful blocking
+                this.gameObject.GetComponent<PlayerStats>().health -= (int)(dmg*blockingFactor);
+            }
+            else if (hitPoint.point.x < this.transform.position.x - 1 && !facingRight)
+            {
+                //play animation for succesful blocking
+                this.gameObject.GetComponent<PlayerStats>().health -= (int)(dmg * blockingFactor);
+            }
+        }
+        else
+        {
+            this.gameObject.GetComponent<PlayerStats>().health -= (int)(dmg);
+        }
     }
 
     private void endAttacking()
@@ -300,6 +428,16 @@ public class PlayerMovement : MonoBehaviour
     {
         isParrying = false;
         blockReady = true;
+    }
+
+    private void startParryingFrame()
+    {
+        parryFrameAcive = true;
+    }
+
+    private void endParryingFrame()
+    {
+        parryFrameAcive = false;
     }
 
     private void fireballing()
