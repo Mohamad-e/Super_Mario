@@ -218,7 +218,10 @@ public class PlayerMovement : MonoBehaviour
         else if (collision.gameObject.tag == "CaveEntrance")
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         else if (collision.gameObject.tag == "CaveExit")
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+        {
+            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex - 1);
+        }
+            
     }
 
     private void flip()
