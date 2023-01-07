@@ -215,6 +215,10 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.tag == "ground")
             isGrounded = true;
+        else if (collision.gameObject.tag == "CaveEntrance")
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        else if (collision.gameObject.tag == "CaveExit")
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     }
 
     private void flip()

@@ -9,6 +9,8 @@ TagManager:
   - fireball
   - DespawnTrigger
   - FireballDragon
+  - CaveEntrance
+  - CaveExit
   layers:
   - Default
   - TransparentFX
