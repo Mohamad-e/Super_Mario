@@ -34,6 +34,7 @@ public class FireballDragon : MonoBehaviour
         {
             Debug.Log("neither Parried nor Blocked");
             collision.collider.GetComponent<PlayerStats>().currentHealth -= fireballDamage;
+            collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
         }
         Destroy(gameObject);
     }

@@ -34,10 +34,12 @@ public class PlayerMovement : MonoBehaviour
     private bool isStriking = false;
     private bool isFireballing = false;
     private bool isParrying = false;
+    private bool afterParry = false;
     public bool parryFrameAcive = false;
     private bool blockReady = false;
     public bool isBlocking = false;
-
+    public bool isGettingHurt = false;
+    private bool isGettingHurtAnimation = false;
     
     
 
@@ -84,12 +86,12 @@ public class PlayerMovement : MonoBehaviour
 
 
         //sprinting
-        if (Input.GetKeyDown(KeyCode.E) && isGrounded && !isCrouching && !isParrying && !isBlocking)
+        if (Input.GetKeyDown(KeyCode.E) && isGrounded && !isCrouching && !isParrying && !isBlocking && !isGettingHurtAnimation)
         {
             speed = 10f;
             //Debug.Log("sprinting");
             //rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity*2f, ref mVelocity, .05f);
-        }else if(Input.GetKeyUp(KeyCode.E) && !isCrouching && !isParrying && !isBlocking)
+        }else if(Input.GetKeyUp(KeyCode.E) && !isCrouching && !isParrying && !isBlocking && !isGettingHurtAnimation)
         {
             //Debug.Log("stop sprinting");
             speed = 3f;
@@ -97,13 +99,13 @@ public class PlayerMovement : MonoBehaviour
 
         
         //crouching
-        if(Input.GetKeyDown(KeyCode.S) && isGrounded && !isAttacking && !isDashing && !isStriking && !isFireballing && !isBlocking && !blockReady && !isParrying)
+        if(Input.GetKeyDown(KeyCode.S) && isGrounded && !isAttacking && !isDashing && !isStriking && !isFireballing && !isBlocking && !blockReady && !isParrying && !isGettingHurtAnimation)
         {
             animator.SetBool("crouching", true);
             speed = 0;
             isCrouching = true;
         } 
-        else if(Input.GetKeyUp(KeyCode.S) && isGrounded && !isAttacking && !isDashing && !isStriking && !isFireballing && !isBlocking && !blockReady && !isParrying)
+        else if(Input.GetKeyUp(KeyCode.S) && isGrounded && !isAttacking && !isDashing && !isStriking && !isFireballing && !isBlocking && !blockReady && !isParrying && !isGettingHurtAnimation)
         {
             animator.SetBool("crouching", false);
             speed = 3f;
@@ -112,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
 
 
         //Jumping
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !isCrouching && !isDashing && !isBlocking && !blockReady)
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !isCrouching && !isDashing && !isBlocking && !blockReady && !isGettingHurtAnimation)
         { 
             isGrounded = false;
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
@@ -120,7 +122,7 @@ public class PlayerMovement : MonoBehaviour
             doubleJump = true;
         }
         //double Jump
-        else if(Input.GetKeyDown(KeyCode.Space) && doubleJump && !isCrouching && !isBlocking && !blockReady)
+        else if(Input.GetKeyDown(KeyCode.Space) && doubleJump && !isCrouching && !isBlocking && !blockReady && !isGettingHurtAnimation)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
@@ -129,7 +131,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //attacking
-        if (Input.GetKeyDown(KeyCode.K) && !isDashing && !isAttacking && !isCrouching && !isFireballing && !isStriking && !isBlocking && !blockReady &&  !isParrying)
+        if (Input.GetKeyDown(KeyCode.K) && !isDashing && !isAttacking && !isCrouching && !isFireballing && !isStriking && !isBlocking && !blockReady &&  !isParrying && !isGettingHurtAnimation)
         {
             animator.SetTrigger("attacking");
             isAttacking = true;
@@ -142,7 +144,7 @@ public class PlayerMovement : MonoBehaviour
         }*/
 
         //dashing
-        if (Input.GetKeyDown(KeyCode.L) && isGrounded && !isDashing && !isAttacking && !isStriking && !isCrouching && !isFireballing && !isBlocking && !blockReady)
+        if (Input.GetKeyDown(KeyCode.L) && isGrounded && !isDashing && !isAttacking && !isStriking && !isCrouching && !isFireballing && !isBlocking && !blockReady && !isGettingHurtAnimation)
         {
             animator.SetTrigger("dashing");
             isDashing = true;
@@ -159,11 +161,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //parrying + blocking
-        if(Input.GetKeyDown(KeyCode.B) && !isDashing && !isAttacking && !isStriking && !isCrouching && !isFireballing && !isParrying)
+        if(Input.GetKeyDown(KeyCode.B) && !isDashing && !isAttacking && !isStriking && !isCrouching && !isFireballing && !isParrying && !isGettingHurtAnimation)
         {
             animator.SetTrigger("parrying");
             isParrying = true;
-            
+            afterParry = true;
         }
         if (Input.GetKey(KeyCode.B) && blockReady && isGrounded)
         {
@@ -171,16 +173,17 @@ public class PlayerMovement : MonoBehaviour
             isBlocking = true;
             speed = 1f;
         }
-        else if(Input.GetKeyUp(KeyCode.B) && !isCrouching && !isFireballing && !isParrying)
+        else if(!(Input.GetKey(KeyCode.B)) && !isCrouching && !isFireballing && !isParrying && afterParry)
         {
             animator.SetBool("blocking", false);
             isBlocking = false;
             blockReady = false;
+            afterParry = false;
             speed = 3f;
         }
 
         //fireball
-        if (Input.GetKeyDown(KeyCode.F) && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing && !isParrying && !isBlocking && !blockReady)
+        if (Input.GetKeyDown(KeyCode.F) && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing && !isParrying && !isBlocking && !blockReady && !isGettingHurtAnimation)
         {
             animator.SetTrigger("fireball");
             isFireballing = true;
@@ -191,13 +194,13 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //striking
-        if (Input.GetKeyDown(KeyCode.J) && isGrounded && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing && !isBlocking && !blockReady)
+        if (Input.GetKeyDown(KeyCode.J) && isGrounded && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing && !isBlocking && !blockReady && !isGettingHurtAnimation)
         {
             animator.SetTrigger("striking");
             isStriking = true;
         }
 
-        if (dizzy == true)
+        if (dizzy)
         {
             animator.SetTrigger("dizzy");
             dizzy = false;
@@ -209,6 +212,31 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.SetBool("jumping", false);
         }
+
+        if (isGettingHurt && !isGettingHurtAnimation)
+        {
+            isDashing = false;
+            isCrouching = false;
+            isAttacking = false;
+            isStriking = false;
+            isFireballing = false;
+            isParrying = false;
+            afterParry = false;
+            parryFrameAcive = false;
+            blockReady = false;
+            isBlocking = false;
+
+            
+            isGettingHurtAnimation = true;
+            isGettingHurt = false;
+            animator.SetTrigger("hurt");
+        }
+
+        if (Input.GetKeyDown(KeyCode.M)) {
+            //rb.AddForce(, ForceMode2D.Impulse);
+            rb.velocity = new Vector2(13, 3);
+        }
+        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -445,6 +473,11 @@ public class PlayerMovement : MonoBehaviour
     private void endParryingFrame()
     {
         parryFrameAcive = false;
+    }
+
+    private void endIsGettingHurtAnimation()
+    {
+        isGettingHurtAnimation = false;
     }
 
     private void fireballing()

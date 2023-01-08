@@ -17,36 +17,39 @@ public class BeetleMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        switch (direction)
+        if(direction == -1)
         {
-            case -1:
-                if(transform.position.x > fMinX)
-                {
-                    flip();
-                    GetComponent<Rigidbody2D>().velocity = new Vector2(-movingSpeed, GetComponent<Rigidbody2D>().velocity.y); 
-                }
-                else
-                {
-                    direction = 1;
-                }
-                break;
-
-            case 1:
-                if (transform.position.x < fMaxX)
-                {
-                    flip();
-                    GetComponent<Rigidbody2D>().velocity = new Vector2(movingSpeed, GetComponent<Rigidbody2D>().velocity.y);
-                }
-                else
-                {
-                    direction = -1;
-                }
-                break;
+            if (transform.localPosition.x > fMinX)
+            {
+                //flip();
+                GetComponent<Rigidbody2D>().velocity = new Vector2(-movingSpeed, GetComponent<Rigidbody2D>().velocity.y);
+            }
+            else
+            {
+                Debug.Log("direction -1");
+                direction = 1;
+                flip();
+            }
         }
-        flip();
+        else if(direction == 1)
+        {
+            if (transform.localPosition.x < fMaxX)
+            {
+                //flip();
+                GetComponent<Rigidbody2D>().velocity = new Vector2(movingSpeed, GetComponent<Rigidbody2D>().velocity.y);
+            }
+            else
+            {
+                Debug.Log("direction 1");
+                direction = -1;
+                flip();
+            }
+        }
+        
     }
+
     private void flip()
     {
-        transform.Rotate(0f, 180f, 0f);
+            transform.Rotate(0f, 180f, 0f);
     }
 }
