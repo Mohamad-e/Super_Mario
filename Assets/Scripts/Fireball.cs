@@ -21,6 +21,7 @@ public class Fireball : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Destroy(gameObject);
-        collision.collider.GetComponent<enemy>().health -= fireballDamage;
+        if(collision.collider.GetComponent<enemy>() != null)
+            collision.collider.GetComponent<enemy>().health -= fireballDamage;
     }
 }

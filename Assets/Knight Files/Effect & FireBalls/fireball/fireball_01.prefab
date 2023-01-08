@@ -189,4 +189,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5bfddb7b8cb4a1458e96747f0fc4600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireballDamage: 100
+  fireballDamage: 50

@@ -10,9 +10,9 @@ public class Lizard : MonoBehaviour
 
     public float distance;
     private bool direction;
-    private float cooldown = 5f;
+    public float cooldownMax = 3f;
+    public float cooldown = 3f;
     public Animator anim;
-
 
     private void Start()
     {
@@ -27,14 +27,29 @@ public class Lizard : MonoBehaviour
         if (Vector3.Distance(targetPlayer.position, transform.position) <= distance)
         {
             
-            anim.SetTrigger("shooting");
+
+            if (cooldown <= 0)
+            {
+                if (transform.position.y <= targetPlayer.position.y)
+                {
+                    this.transform.rotation = new Quaternion(0f, 180f, 0f, 0f);
+                }
+                else if (transform.position.y > targetPlayer.position.y)
+                {
+                    this.transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
+                }
+
+                anim.SetTrigger("shooting");
+
+                cooldown = cooldownMax;
+            }
         }
-        cooldown -= Time.deltaTime;
-        if(cooldown <= 0)
-        {
-            Instantiate(fireball, fireballSpawn.position, Quaternion.identity);
-            cooldown = 4f;
-        }
-            
+        cooldown -= Time.deltaTime; 
     }
+
+    private void shootFireball()
+    {
+        Instantiate(fireball, fireballSpawn.position, Quaternion.identity).SetActive(true);
+    }
+
 }
