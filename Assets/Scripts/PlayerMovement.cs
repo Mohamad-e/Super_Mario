@@ -243,10 +243,13 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.tag == "ground")
             isGrounded = true;
-        if (collision.gameObject.tag == "enemy")
+        else if (collision.gameObject.tag == "CaveEntrance")
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        else if (collision.gameObject.tag == "CaveExit")
         {
-
+            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex - 1);
         }
+            
     }
 
     private void flip()
