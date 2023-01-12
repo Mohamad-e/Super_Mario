@@ -11,6 +11,7 @@ TagManager:
   - FireballDragon
   - CaveEntrance
   - CaveExit
+  - Chest
   layers:
   - Default
   - TransparentFX
