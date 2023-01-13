@@ -10,6 +10,9 @@ public class LizardFireball : MonoBehaviour
     private float speed = 5f;
     [SerializeField]
     private int damage = 30;
+    [SerializeField]
+    private float timeAlive = 5;
+    private float timer = 0;
 
     private Vector2 fromEnemyToPlayer;
     private void Start()
@@ -22,7 +25,15 @@ public class LizardFireball : MonoBehaviour
     {
 
         transform.position = Vector2.MoveTowards(transform.position, fromEnemyToPlayer, speed * Time.deltaTime);
-        if (transform.position.Equals(fromEnemyToPlayer))
+       /* if (transform.position.Equals(fromEnemyToPlayer))
+        {
+            Destroy(gameObject);
+        }*/
+
+        if(timer < timeAlive)
+        {
+            timer += Time.deltaTime;
+        } else if (timer >= timeAlive)
         {
             Destroy(gameObject);
         }
@@ -48,7 +59,6 @@ public class LizardFireball : MonoBehaviour
                 collision.collider.GetComponent<PlayerStats>().currentHealth -= damage;
                 collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
             }
-
         }
         Destroy(gameObject);
     }

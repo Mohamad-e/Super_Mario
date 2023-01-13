@@ -12,11 +12,11 @@ GameObject:
   - component: {fileID: 3878179092101951219}
   - component: {fileID: 3878179092101951180}
   - component: {fileID: 3878179092101951217}
-  - component: {fileID: 3878179092101951216}
+  - component: {fileID: 277845240342931848}
   - component: {fileID: 2931594613992411476}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: fireball1
-  m_TagString: Untagged
+  m_TagString: FireballDragon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -100,9 +100,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61334a6ab88606d45b89313f35b3e436, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPlayer: {fileID: 0}
+  targetPlayer: {fileID: 3878179092101951218}
   enemyPosition: {fileID: 0}
   speed: 5
+  damage: 30
+  timeAlive: 5
 --- !u!50 &3878179092101951217
 Rigidbody2D:
   serializedVersion: 4
@@ -124,8 +126,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!60 &3878179092101951216
-PolygonCollider2D:
+--- !u!70 &277845240342931848
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -137,26 +139,9 @@ PolygonCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.16, y: 0.16}
-    newSize: {x: 0.16, y: 0.16}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: -0.03, y: 0.06}
-      - {x: -0.07, y: 0.04}
-      - {x: -0.07, y: -0.02}
-      - {x: -0.049999997, y: -0.06}
-      - {x: 0.01, y: -0.06}
-      - {x: 0.06, y: -0.02}
-      - {x: 0.06, y: 0.01}
-      - {x: 0.01, y: 0.06}
+  m_Offset: {x: -0.005, y: 0}
+  m_Size: {x: 0.1, y: 0.1}
+  m_Direction: 0
 --- !u!95 &2931594613992411476
 Animator:
   serializedVersion: 4

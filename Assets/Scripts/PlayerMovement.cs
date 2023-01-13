@@ -40,8 +40,11 @@ public class PlayerMovement : MonoBehaviour
     public bool isBlocking = false;
     public bool isGettingHurt = false;
     private bool isGettingHurtAnimation = false;
-    
-    
+    private bool invinsibleFrames = false;
+
+    private float invinsibleFramesTimer = 0;
+    [SerializeField]
+    private float invinsibleFramesTime = 1;
 
     //Player Status
     public bool dizzy = false;
@@ -213,10 +216,23 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("jumping", false);
         }
 
+        if (invinsibleFrames == true)
+        {
+            invinsibleFramesTimer += Time.deltaTime;
+            if(invinsibleFramesTimer >= invinsibleFramesTime)
+            {
+                invinsibleFramesTimer = 0;
+                invinsibleFrames = false;
+            }
+        }
+
         if (isGettingHurt && !isGettingHurtAnimation)
         {
+            invinsibleFrames = true;
+
             isDashing = false;
-            isCrouching = false;
+            //isCrouching = false;
+            animator.SetBool("crouching", false);
             isAttacking = false;
             isStriking = false;
             isFireballing = false;
@@ -243,6 +259,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.tag == "ground")
             isGrounded = true;
+
         else if (collision.gameObject.tag == "CaveEntrance")
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         else if (collision.gameObject.tag == "CaveExit")
