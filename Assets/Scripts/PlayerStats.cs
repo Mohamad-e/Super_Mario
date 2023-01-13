@@ -28,7 +28,7 @@ public class PlayerStats : MonoBehaviour
 
     //Player Stats
     private int playerLevel = 1;
-    private int attributePoints = 0;
+    public int attributePoints = 0;
     private int specialAttributePoints = 0;
     public int playerStrength = 1;
     public int playerArmor = 1;
