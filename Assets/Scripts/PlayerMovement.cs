@@ -53,6 +53,14 @@ public class PlayerMovement : MonoBehaviour
     public GameObject fireball;
     public Transform fireballSpawn;
 
+
+    //Audio
+    public AudioSource attackSound;
+    public AudioSource pickupSound;
+    public AudioSource levelupSound;
+    public AudioSource jumpSound;
+    public AudioSource fireballSound;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -120,6 +128,7 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             animator.SetBool("jumping", true);
             doubleJump = true;
+            jumpSound.Play();
         }
         //double Jump
         else if(Input.GetKeyDown(KeyCode.Space) && doubleJump && !isCrouching && !isBlocking && !blockReady && !isGettingHurtAnimation)
@@ -128,6 +137,7 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             animator.SetBool("jumping", true);
             doubleJump = false;
+            jumpSound.Play();
         }
 
         //attacking
@@ -135,6 +145,7 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.SetTrigger("attacking");
             isAttacking = true;
+            attackSound.Play();
         }
 
         //jumpAttack
@@ -187,6 +198,7 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.SetTrigger("fireball");
             isFireballing = true;
+            fireballSound.Play();
             /*//List<Object> Objects = new List<Object>();
             GameObject fireBall = Instantiate(fireball, fireballSpawn.transform.position, transform.rotation);
             fireBall.SetActive(true);

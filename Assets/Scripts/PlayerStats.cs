@@ -44,6 +44,10 @@ public class PlayerStats : MonoBehaviour
     public TMP_Text intelligenceText;
     public TMP_Text attributePointsText;
     public TMP_Text specialPointsText;
+    public TMP_Text levelUpText;
+
+    //Audio
+    public AudioSource confirmPointSound;
 
     private void Start()
     {
@@ -54,6 +58,7 @@ public class PlayerStats : MonoBehaviour
         strenghtButton.gameObject.SetActive(false);
         armorButton.gameObject.SetActive(false);
         intelligenceButton.gameObject.SetActive(false);
+        levelUpText.enabled = false;
 
     }
 
@@ -72,7 +77,9 @@ public class PlayerStats : MonoBehaviour
     {
         if(currentExperience >= experienceToNextLvl)
         {
-            //updare player level and reset experience, difference between current experience and experience to next level
+            StartCoroutine(showLevelUp());
+            GameObject.Find("Player").GetComponent<PlayerMovement>().levelupSound.Play();
+            //update player level and reset experience, difference between current experience and experience to next level
             playerLevel++;
             currentExperience = currentExperience - experienceToNextLvl;
 
@@ -92,6 +99,7 @@ public class PlayerStats : MonoBehaviour
 
     public void incrStrength()
     {
+        confirmPointSound.Play();
         playerStrength++;
         attributePoints--;
         updateStats();
@@ -99,6 +107,7 @@ public class PlayerStats : MonoBehaviour
 
     public void incrArmor()
     {
+        confirmPointSound.Play();
         playerArmor++;
         attributePoints--;
         updateStats();
@@ -106,6 +115,7 @@ public class PlayerStats : MonoBehaviour
 
     public void incrIntelligence()
     {
+        confirmPointSound.Play();
         playerIntelligence++;
         attributePoints--;
         updateStats();
@@ -113,6 +123,7 @@ public class PlayerStats : MonoBehaviour
 
     public void incrHealth()
     {
+        confirmPointSound.Play();
         maxHealth += 10;
         specialAttributePoints--;
         updateStats();
@@ -120,6 +131,7 @@ public class PlayerStats : MonoBehaviour
 
     public void incrMana()
     {
+        confirmPointSound.Play();
         maxMana += 10;
         specialAttributePoints--;
         updateStats();
@@ -162,5 +174,12 @@ public class PlayerStats : MonoBehaviour
             healthButton.gameObject.SetActive(false);
             manaButton.gameObject.SetActive(false);
         }
+    }
+
+    private IEnumerator showLevelUp()
+    {
+        levelUpText.enabled = true;
+        yield return new WaitForSeconds(2f);
+        levelUpText.enabled = false;
     }
 }

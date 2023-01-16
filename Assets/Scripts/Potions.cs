@@ -37,6 +37,7 @@ public class Potions : MonoBehaviour
             }
             else
                 GameObject.Find("Player").GetComponent<PlayerStats>().attributePoints++;
+            GameObject.Find("Player").GetComponent<PlayerMovement>().pickupSound.Play();
             Destroy(gameObject);
         }
     }
