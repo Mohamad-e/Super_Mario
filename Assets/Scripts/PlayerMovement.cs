@@ -40,8 +40,9 @@ public class PlayerMovement : MonoBehaviour
     public bool isBlocking = false;
     public bool isGettingHurt = false;
     private bool isGettingHurtAnimation = false;
-    
-    
+    public bool isGettingHurtFrame = false;
+
+
 
     //Player Status
     public bool dizzy = false;
@@ -96,7 +97,7 @@ public class PlayerMovement : MonoBehaviour
         //sprinting
         if (Input.GetKeyDown(KeyCode.E) && isGrounded && !isCrouching && !isParrying && !isBlocking && !isGettingHurtAnimation)
         {
-            speed = 10f;
+            speed = 6f;
             //Debug.Log("sprinting");
             //rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity*2f, ref mVelocity, .05f);
         }else if(Input.GetKeyUp(KeyCode.E) && !isCrouching && !isParrying && !isBlocking && !isGettingHurtAnimation)
@@ -194,10 +195,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //fireball
-        if (Input.GetKeyDown(KeyCode.F) && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing && !isParrying && !isBlocking && !blockReady && !isGettingHurtAnimation)
+        if (Input.GetKeyDown(KeyCode.F) && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing && !isParrying && !isBlocking && !blockReady && !isGettingHurtAnimation && this.gameObject.GetComponent<PlayerStats>().mana >= 25)
         {
             animator.SetTrigger("fireball");
             isFireballing = true;
+            this.gameObject.GetComponent<PlayerStats>().mana -= 25;
             fireballSound.Play();
             /*//List<Object> Objects = new List<Object>();
             GameObject fireBall = Instantiate(fireball, fireballSpawn.transform.position, transform.rotation);
@@ -238,7 +240,7 @@ public class PlayerMovement : MonoBehaviour
             blockReady = false;
             isBlocking = false;
 
-            
+            isGettingHurtFrame = true;
             isGettingHurtAnimation = true;
             isGettingHurt = false;
             animator.SetTrigger("hurt");
@@ -248,7 +250,6 @@ public class PlayerMovement : MonoBehaviour
             //rb.AddForce(, ForceMode2D.Impulse);
             rb.velocity = new Vector2(13, 3);
         }
-        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -261,7 +262,6 @@ public class PlayerMovement : MonoBehaviour
         {
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex - 1);
         }
-            
     }
 
     private void flip()
@@ -490,6 +490,11 @@ public class PlayerMovement : MonoBehaviour
     private void endIsGettingHurtAnimation()
     {
         isGettingHurtAnimation = false;
+    }
+
+    private void endIsGettingHurtFrame()
+    {
+        isGettingHurtFrame = false;
     }
 
     private void fireballing()
