@@ -20,21 +20,25 @@ public class FireballDragon : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-
-        if (collision.collider.GetComponent<PlayerMovement>().parryFrameAcive)
-        {
-            Debug.Log("Parried");
-        }
-        else if (collision.collider.GetComponent<PlayerMovement>().isBlocking)
-        {
-            Debug.Log("Blocked");
-            collision.collider.GetComponent<PlayerStats>().currentHealth -= fireballDamage;
-        }
-        else
-        {
-            Debug.Log("neither Parried nor Blocked");
-            collision.collider.GetComponent<PlayerStats>().currentHealth -= fireballDamage;
-            collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
+        if (collision.gameObject.tag == "Player") {
+            if (!collision.gameObject.GetComponent<PlayerMovement>().isGettingHurtFrame)
+            {
+                if (collision.collider.GetComponent<PlayerMovement>().parryFrameAcive)
+                {
+                    Debug.Log("Parried");
+                }
+                else if (collision.collider.GetComponent<PlayerMovement>().isBlocking)
+                {
+                    Debug.Log("Blocked");
+                    collision.collider.GetComponent<PlayerStats>().currentHealth -= fireballDamage;
+                }
+                else
+                {
+                    Debug.Log("neither Parried nor Blocked");
+                    collision.collider.GetComponent<PlayerStats>().currentHealth -= fireballDamage;
+                    collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
+                }
+            }
         }
         Destroy(gameObject);
     }

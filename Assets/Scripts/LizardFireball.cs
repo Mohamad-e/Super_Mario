@@ -4,25 +4,46 @@ using UnityEngine;
 
 public class LizardFireball : MonoBehaviour
 {
-    public Transform targetPlayer;
-    public Transform enemyPosition;
+    public GameObject targetPlayer;
     [SerializeField]
     private float speed = 5f;
     [SerializeField]
     private int damage = 30;
+    [SerializeField]
+    private float timeAlive = 5;
+    private float timer = 0;
+    private Rigidbody2D rb;
 
-    private Vector2 fromEnemyToPlayer;
+    private Vector2 rotationFromEnemyToPlayer;
     private void Start()
     {
-        fromEnemyToPlayer = targetPlayer.position;
+        
+        rb = GetComponent<Rigidbody2D>();
+        rotationFromEnemyToPlayer = targetPlayer.transform.position - transform.position;
+        //rotationFromEnemyToPlayer.x = Mathf.Abs(rotationFromEnemyToPlayer.x);
+        //rotationFromEnemyToPlayer.y = Mathf.Abs(rotationFromEnemyToPlayer.y);
+
+        //transform.rotation = new Quaternion(rotationFromEnemyToPlayer.x, rotationFromEnemyToPlayer.y, 1, 1);
+        //Vector3 movement = transform.rotation * Vector3.forward; ;
+        //rb.velocity = movement * 5;
+
+        float tmpNormalisieren = Mathf.Abs(Mathf.Sqrt(rotationFromEnemyToPlayer.x * rotationFromEnemyToPlayer.x + rotationFromEnemyToPlayer.y * rotationFromEnemyToPlayer.y));
+        rotationFromEnemyToPlayer.x = rotationFromEnemyToPlayer.x / tmpNormalisieren;
+        rotationFromEnemyToPlayer.y = rotationFromEnemyToPlayer.y / tmpNormalisieren;
+        rotationFromEnemyToPlayer *= 5;
+        rb.velocity = rotationFromEnemyToPlayer;
+
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        transform.position = Vector2.MoveTowards(transform.position, fromEnemyToPlayer, speed * Time.deltaTime);
-        if (transform.position.Equals(fromEnemyToPlayer))
+        if (timer < timeAlive)
+        {
+            timer += Time.deltaTime;
+        }
+        else if (timer >= timeAlive)
         {
             Destroy(gameObject);
         }
@@ -32,23 +53,25 @@ public class LizardFireball : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
-            //  && ((collision.collider.transform.position.x > transform.position.x && collision.collider.transform.rotation.y == -180) || (collision.collider.transform.position.x < transform.position.x && collision.collider.transform.rotation.y == 0))
-            if (collision.collider.GetComponent<PlayerMovement>().parryFrameAcive  )
+            if (!collision.gameObject.GetComponent<PlayerMovement>().isGettingHurtFrame)
             {
-                Debug.Log("Parried");
+                //  && ((collision.collider.transform.position.x > transform.position.x && collision.collider.transform.rotation.y == -180) || (collision.collider.transform.position.x < transform.position.x && collision.collider.transform.rotation.y == 0))
+                if (collision.collider.GetComponent<PlayerMovement>().parryFrameAcive)
+                {
+                    Debug.Log("Parried");
+                }
+                else if (collision.collider.GetComponent<PlayerMovement>().isBlocking)
+                {
+                    Debug.Log("Blocked");
+                    collision.collider.GetComponent<PlayerStats>().currentHealth -= damage / 2;
+                }
+                else
+                {
+                    Debug.Log("neither Parried nor Blocked");
+                    collision.collider.GetComponent<PlayerStats>().currentHealth -= damage;
+                    collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
+                }
             }
-            else if (collision.collider.GetComponent<PlayerMovement>().isBlocking)
-            {
-                Debug.Log("Blocked");
-                collision.collider.GetComponent<PlayerStats>().currentHealth -= damage/2;
-            }
-            else
-            {
-                Debug.Log("neither Parried nor Blocked");
-                collision.collider.GetComponent<PlayerStats>().currentHealth -= damage;
-                collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
-            }
-
         }
         Destroy(gameObject);
     }
