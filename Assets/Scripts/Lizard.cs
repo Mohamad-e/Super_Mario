@@ -26,18 +26,18 @@ public class Lizard : MonoBehaviour
         //InvokeRepeating
         if (Vector3.Distance(targetPlayer.position, transform.position) <= distance)
         {
-            if (transform.position.y <= targetPlayer.position.y)
-            {
-                this.transform.rotation = new Quaternion(0f, 180f, 0f, 0f);
-            }
-            else if (transform.position.y > targetPlayer.position.y)
-            {
-                this.transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
-            }
+            
 
             if (cooldown <= 0)
             {
-                
+                if (transform.position.y <= targetPlayer.position.y)
+                {
+                    this.transform.rotation = new Quaternion(0f, 180f, 0f, 0f);
+                }
+                else if (transform.position.y > targetPlayer.position.y)
+                {
+                    this.transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
+                }
 
                 anim.SetTrigger("shooting");
 
