@@ -35,8 +35,25 @@ public class enemy : MonoBehaviour
     {
         if(collision.gameObject.tag == "Player")
         {
-            collision.gameObject.GetComponent<PlayerStats>().currentHealth -= 10;
-            collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
+            if (!collision.gameObject.GetComponent<PlayerMovement>().isGettingHurtFrame)
+            {
+                collision.gameObject.GetComponent<PlayerStats>().currentHealth -= 10;
+                collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
+            }
         }
     }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Player")
+        {
+            if (!collision.gameObject.GetComponent<PlayerMovement>().isGettingHurtFrame)
+            {
+                collision.gameObject.GetComponent<PlayerStats>().currentHealth -= 40;
+                collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
+            }   
+        }
+    }
+
+    
 }
