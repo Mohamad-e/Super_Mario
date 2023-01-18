@@ -28,12 +28,12 @@ public class BatMovement : MonoBehaviour
 
 
 
-        if (transform.position.x < targetPlayer.position.x && !direction)
+        if (transform.position.x < targetPlayer.position.x && direction)
         {
             direction = !direction;
             transform.Rotate(0f, 180f, 0f);
         }
-        else if (transform.position.x > targetPlayer.position.x && direction)
+        else if (transform.position.x > targetPlayer.position.x && !direction)
         {
             direction = !direction;
             transform.Rotate(0f, 180f, 0f);

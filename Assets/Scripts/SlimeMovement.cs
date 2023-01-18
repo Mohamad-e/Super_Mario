@@ -10,16 +10,17 @@ public class SlimeMovement : MonoBehaviour
     private bool direction;
 
     public Animator anim;
-
+    private Rigidbody2D rb;
     // Start is called before the first frame update
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        Vector3 displacement = (targetPlayer.position - transform.position).normalized;
         if(Vector3.Distance(targetPlayer.position, transform.position) <= distance)
         {
             transform.position = Vector2.MoveTowards(

@@ -257,9 +257,14 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.tag == "ground")
             isGrounded = true;
         else if (collision.gameObject.tag == "CaveEntrance")
+        {
+            GameObject.Find("Player").GetComponent<PlayerStats>().saveStats();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+            
         else if (collision.gameObject.tag == "CaveExit")
         {
+            GameObject.Find("Player").GetComponent<PlayerStats>().saveStats();
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex - 1);
         }
     }
@@ -506,6 +511,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void resetGame()
     {
+        GameObject.Find("Player").GetComponent<PlayerStats>().saveStats();
+        PlayerPrefs.SetFloat("Health", GameObject.Find("Player").GetComponent<PlayerStats>().maxHealth);
+        PlayerPrefs.SetFloat("Mana", GameObject.Find("Player").GetComponent<PlayerStats>().maxMana);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

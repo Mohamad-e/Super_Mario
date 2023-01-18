@@ -7,7 +7,7 @@ public class Chest : MonoBehaviour
     public Animator animator;
     private bool touched = false;
 
-    public GameObject potion;
+    public GameObject[] items;
     public float forceMultiplier;
 
     // Update is called once per frame
@@ -16,7 +16,10 @@ public class Chest : MonoBehaviour
         //Spawn Items
         if (touched)
         {
-            Instantiate(potion, new Vector2(transform.position.x, transform.position.y + .5f), Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-.5f, .5f), 3) * forceMultiplier); 
+            foreach(GameObject item in items)
+            {
+                Instantiate(item, new Vector2(transform.position.x, transform.position.y + .5f), Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-.5f, .5f), 3) * forceMultiplier);
+            }
             touched = false;
         }
     }

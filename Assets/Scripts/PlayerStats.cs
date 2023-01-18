@@ -27,9 +27,9 @@ public class PlayerStats : MonoBehaviour
     public float experienceToNextLvl = 20;
 
     //Player Stats
-    private int playerLevel = 1;
+    public int playerLevel = 1;
     public int attributePoints = 0;
-    private int specialAttributePoints = 0;
+    public int specialAttributePoints = 0;
     public int playerStrength = 1;
     public int playerArmor = 1;
     public int playerIntelligence = 1;
@@ -49,8 +49,16 @@ public class PlayerStats : MonoBehaviour
     //Audio
     public AudioSource confirmPointSound;
 
+    private void Awake()
+    {
+        if(PlayerPrefs.GetInt("Level") == 0)
+            saveStats();
+            
+    }
+
     private void Start()
     {
+        getStats();
         updateStats();
         statsMenu.enabled = false;
         healthButton.gameObject.SetActive(false);
@@ -82,7 +90,6 @@ public class PlayerStats : MonoBehaviour
             //update player level and reset experience, difference between current experience and experience to next level
             playerLevel++;
             currentExperience = currentExperience - experienceToNextLvl;
-
             //change experience to next level
             experienceToNextLvl += 20;
 
@@ -92,7 +99,8 @@ public class PlayerStats : MonoBehaviour
             if(playerLevel % 5 == 0)
             {
                 specialAttributePoints++;
-            }  
+            }
+            saveStats();
             updateStats();
         }
     }
@@ -102,6 +110,7 @@ public class PlayerStats : MonoBehaviour
         confirmPointSound.Play();
         playerStrength++;
         attributePoints--;
+        saveStats();
         updateStats();
     }
 
@@ -110,6 +119,7 @@ public class PlayerStats : MonoBehaviour
         confirmPointSound.Play();
         playerArmor++;
         attributePoints--;
+        saveStats();
         updateStats();
     }
 
@@ -118,6 +128,7 @@ public class PlayerStats : MonoBehaviour
         confirmPointSound.Play();
         playerIntelligence++;
         attributePoints--;
+        saveStats();
         updateStats();
     }
 
@@ -125,7 +136,9 @@ public class PlayerStats : MonoBehaviour
     {
         confirmPointSound.Play();
         maxHealth += 10;
+        currentHealth = maxHealth;
         specialAttributePoints--;
+        saveStats();
         updateStats();
     }
 
@@ -133,7 +146,9 @@ public class PlayerStats : MonoBehaviour
     {
         confirmPointSound.Play();
         maxMana += 10;
+        mana = maxMana;
         specialAttributePoints--;
+        saveStats();
         updateStats();
     }
 
@@ -181,5 +196,38 @@ public class PlayerStats : MonoBehaviour
         levelUpText.enabled = true;
         yield return new WaitForSeconds(2f);
         levelUpText.enabled = false;
+    }
+
+
+    public void saveStats()
+    {
+        PlayerPrefs.SetInt("Level", playerLevel);
+        PlayerPrefs.SetFloat("Health", currentHealth);
+        PlayerPrefs.SetFloat("Mana", mana);
+        PlayerPrefs.SetInt("Strength", playerStrength);
+        PlayerPrefs.SetInt("Armor", playerArmor);
+        PlayerPrefs.SetInt("Intelligence", playerIntelligence);
+        PlayerPrefs.SetInt("AttributePoints", attributePoints);
+        PlayerPrefs.SetInt("SpecialAttributePoints", specialAttributePoints);
+        PlayerPrefs.SetFloat("MaxHealth", maxHealth);
+        PlayerPrefs.SetFloat("MaxMana", maxMana);
+        PlayerPrefs.SetFloat("CurrentExp", currentExperience);
+        PlayerPrefs.SetFloat("ExpNextLevel", experienceToNextLvl);
+    }
+
+    private void getStats()
+    {
+        playerLevel = PlayerPrefs.GetInt("Level");
+        currentHealth = PlayerPrefs.GetFloat("Health");
+        mana = PlayerPrefs.GetFloat("Mana");
+        playerStrength = PlayerPrefs.GetInt("Strength");
+        playerArmor = PlayerPrefs.GetInt("Armor");
+        playerIntelligence = PlayerPrefs.GetInt("Intelligence");
+        attributePoints = PlayerPrefs.GetInt("AttributePoints");
+        specialAttributePoints = PlayerPrefs.GetInt("SpecialAttributePoints");
+        maxHealth = PlayerPrefs.GetFloat("MaxHealth");
+        maxMana = PlayerPrefs.GetFloat("MaxMana");
+        currentExperience = PlayerPrefs.GetFloat("CurrentExp");
+        experienceToNextLvl = PlayerPrefs.GetFloat("ExpNextLevel");
     }
 }
