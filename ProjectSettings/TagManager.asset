@@ -12,6 +12,7 @@ TagManager:
   - CaveEntrance
   - CaveExit
   - Chest
+  - weakWall
   layers:
   - Default
   - TransparentFX

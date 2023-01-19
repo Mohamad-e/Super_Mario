@@ -126,10 +126,40 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !isCrouching && !isDashing && !isBlocking && !blockReady && !isGettingHurtAnimation)
         { 
             isGrounded = false;
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            animator.SetBool("jumping", true);
-            doubleJump = true;
-            jumpSound.Play();
+
+            float raySize = 1.4f;
+            RaycastHit2D[] hits = new RaycastHit2D[3];
+            Debug.DrawRay(gameObject.transform.position, Vector2.down * raySize, Color.white, 5);
+            hits[0] = Physics2D.Raycast(gameObject.transform.position, Vector2.down * raySize);
+
+            Debug.DrawRay(gameObject.transform.position + (Vector3.left*0.4f), Vector2.down * raySize, Color.white, 5);
+            hits[1] = Physics2D.Raycast(gameObject.transform.position + (Vector3.left * 0.4f), Vector2.down * raySize);
+
+            Debug.DrawRay(gameObject.transform.position + (Vector3.right * 0.4f), Vector2.down * raySize, Color.white, 5);
+            hits[2] = Physics2D.Raycast(gameObject.transform.position + (Vector3.right * 0.4f), Vector2.down * raySize);
+
+            bool onGround = false;
+            for(int i = 0; i < hits.Length; i++)
+            {
+                if (hits[i].collider != null)
+                {
+                    Debug.Log("help");
+                    if (hits[i].collider.tag == "ground")
+                    {
+                        onGround = true;
+                        Debug.Log("hallooo");
+                        break;
+                    }
+                }
+            }
+            if (onGround)
+            {
+                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                animator.SetBool("jumping", true);
+                doubleJump = true;
+                jumpSound.Play();
+            }
+            onGround = false;
         }
         //double Jump
         else if(Input.GetKeyDown(KeyCode.Space) && doubleJump && !isCrouching && !isBlocking && !blockReady && !isGettingHurtAnimation)
