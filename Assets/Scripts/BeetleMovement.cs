@@ -26,7 +26,6 @@ public class BeetleMovement : MonoBehaviour
             }
             else
             {
-                Debug.Log("direction -1");
                 direction = 1;
                 flip();
             }
@@ -40,7 +39,6 @@ public class BeetleMovement : MonoBehaviour
             }
             else
             {
-                Debug.Log("direction 1");
                 direction = -1;
                 flip();
             }

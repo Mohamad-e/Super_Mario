@@ -6,6 +6,7 @@ public class Buttons : MonoBehaviour
 {
     public void startGame()
     {
+        PlayerPrefs.DeleteAll();
         SceneManager.LoadScene("test2");
     }
 

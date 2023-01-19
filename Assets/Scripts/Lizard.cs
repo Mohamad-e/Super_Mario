@@ -25,15 +25,7 @@ public class Lizard : MonoBehaviour
     {
         //InvokeRepeating
         if (Vector3.Distance(targetPlayer.position, transform.position) <= distance)
-        {
-            if (transform.position.y <= targetPlayer.position.y)
-            {
-                this.transform.rotation = new Quaternion(0f, 180f, 0f, 0f);
-            }
-            else if (transform.position.y > targetPlayer.position.y)
-            {
-                this.transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
-            }
+        { 
 
             if (cooldown <= 0)
             {
@@ -44,7 +36,17 @@ public class Lizard : MonoBehaviour
                 cooldown = cooldownMax;
             }
         }
-        cooldown -= Time.deltaTime; 
+        cooldown -= Time.deltaTime;
+        if (transform.position.x < targetPlayer.position.x && !direction)
+        {
+            direction = !direction;
+            transform.Rotate(0f, 180f, 0f);
+        }
+        else if (transform.position.x > targetPlayer.position.x && direction)
+        {
+            direction = !direction;
+            transform.Rotate(0f, 180f, 0f);
+        }
     }
 
     private void shootFireball()
