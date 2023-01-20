@@ -28,7 +28,7 @@ public class enemy : MonoBehaviour
 
     /*private void testProjectiles()
     {
-        Instantiate(fireball, this.gameObject.transform.position, this.gameObject.transform.rotation).SetActive(true) ;
+        Instantiate(fireball, this.gameObject.transform.position, this.gameObject.transform.rotation).SetActive(true);
         GameObject fireBall = Instantiate(fireball, fireballSpawn.transform.position, transform.rotation);
     }*/
     private void OnCollisionEnter2D(Collision2D collision)
@@ -45,13 +45,12 @@ public class enemy : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Enemy")
         {
-            if (!collision.gameObject.GetComponent<PlayerMovement>().isGettingHurtFrame)
-            {
-                collision.gameObject.GetComponent<PlayerStats>().currentHealth -= 40;
-                collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
-            }   
+            
+            collision.gameObject.GetComponent<enemy>().health -= 40;
+            //collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
+             
         }
     }
 }

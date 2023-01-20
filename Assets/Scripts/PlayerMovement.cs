@@ -132,10 +132,10 @@ public class PlayerMovement : MonoBehaviour
             Debug.DrawRay(gameObject.transform.position, Vector2.down * raySize, Color.white, 5);
             hits[0] = Physics2D.Raycast(gameObject.transform.position, Vector2.down * raySize);
 
-            Debug.DrawRay(gameObject.transform.position + (Vector3.left*0.4f), Vector2.down * raySize, Color.white, 5);
+            Debug.DrawRay(gameObject.transform.position + (Vector3.left*0.25f), Vector2.down * raySize, Color.white, 5);
             hits[1] = Physics2D.Raycast(gameObject.transform.position + (Vector3.left * 0.4f), Vector2.down * raySize);
 
-            Debug.DrawRay(gameObject.transform.position + (Vector3.right * 0.4f), Vector2.down * raySize, Color.white, 5);
+            Debug.DrawRay(gameObject.transform.position + (Vector3.right * 0.25f), Vector2.down * raySize, Color.white, 5);
             hits[2] = Physics2D.Raycast(gameObject.transform.position + (Vector3.right * 0.4f), Vector2.down * raySize);
 
             bool onGround = false;
@@ -143,11 +143,10 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (hits[i].collider != null)
                 {
-                    Debug.Log("help");
+      
                     if (hits[i].collider.tag == "ground")
                     {
                         onGround = true;
-                        Debug.Log("hallooo");
                         break;
                     }
                 }
@@ -161,6 +160,7 @@ public class PlayerMovement : MonoBehaviour
             }
             onGround = false;
         }
+
         //double Jump
         else if(Input.GetKeyDown(KeyCode.Space) && doubleJump && !isCrouching && !isBlocking && !blockReady && !isGettingHurtAnimation)
         {
