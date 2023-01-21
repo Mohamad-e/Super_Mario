@@ -31,7 +31,7 @@ public class enemy : MonoBehaviour
         Instantiate(fireball, this.gameObject.transform.position, this.gameObject.transform.rotation).SetActive(true);
         GameObject fireBall = Instantiate(fireball, fireballSpawn.transform.position, transform.rotation);
     }*/
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionStay2D(Collision2D collision)
     {
         if(collision.gameObject.tag == "Player")
         {
@@ -51,6 +51,15 @@ public class enemy : MonoBehaviour
             collision.gameObject.GetComponent<enemy>().health -= 40;
             //collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
              
+        }
+
+        if (collision.gameObject.tag == "Player")
+        {
+            if (!collision.gameObject.GetComponent<PlayerMovement>().isGettingHurtFrame)
+            {
+                collision.gameObject.GetComponent<PlayerStats>().currentHealth -= 40;
+                collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
+            }
         }
     }
 }

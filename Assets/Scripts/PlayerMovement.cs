@@ -31,7 +31,8 @@ public class PlayerMovement : MonoBehaviour
     private bool isDashing = false;
     private bool isCrouching = false;
     private bool isAttacking = false;
-    private bool isStriking = false;
+    public bool isStriking = false;
+    private bool strikingCooldown = false;
     private bool isFireballing = false;
     private bool isParrying = false;
     private bool afterParry = false;
@@ -41,8 +42,15 @@ public class PlayerMovement : MonoBehaviour
     public bool isGettingHurt = false;
     private bool isGettingHurtAnimation = false;
     public bool isGettingHurtFrame = false;
+    private bool invincibilityCooldown = false;
 
-
+    // Timer
+    [SerializeField]
+    private float strikeTimerAlive = 10.0f;
+    private float strikeTimer = 0.0f;
+    [SerializeField]
+    private float invincibilityFrameTimerAlive = 3.0f;
+    private float invincibilityFrameTimer = 0;
 
     //Player Status
     public bool dizzy = false;
@@ -160,7 +168,6 @@ public class PlayerMovement : MonoBehaviour
             }
             onGround = false;
         }
-
         //double Jump
         else if(Input.GetKeyDown(KeyCode.Space) && doubleJump && !isCrouching && !isBlocking && !blockReady && !isGettingHurtAnimation)
         {
@@ -176,6 +183,10 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.SetTrigger("attacking");
             isAttacking = true;
+            if (isGrounded)
+            {
+                speed = 0f;
+            }
             attackSound.Play();
         }
 
@@ -238,11 +249,25 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //striking
-        if (Input.GetKeyDown(KeyCode.J) && isGrounded && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing && !isBlocking && !blockReady && !isGettingHurtAnimation)
+        if (Input.GetKeyDown(KeyCode.J) && isGrounded && !isDashing && !isAttacking && !isCrouching && !isStriking && !isFireballing && !isBlocking && !blockReady && !isGettingHurtAnimation && !strikingCooldown)
         {
             animator.SetTrigger("striking");
+            speed = 0f;
+            
+            strikingCooldown = true;
             isStriking = true;
         }
+            // Timer
+        if(strikingCooldown)
+            if (strikeTimer < strikeTimerAlive)
+            {
+                strikeTimer += Time.deltaTime;
+            }
+            else if (strikeTimer >= strikeTimerAlive)
+            {
+                strikeTimer = 0;
+                strikingCooldown = false;
+            }
 
         if (dizzy)
         {
@@ -250,13 +275,13 @@ public class PlayerMovement : MonoBehaviour
             dizzy = false;
         }
 
-
         //check if player touches ground
         if (isGrounded)
         {
             animator.SetBool("jumping", false);
         }
 
+        // Hurt
         if (isGettingHurt && !isGettingHurtAnimation)
         {
             isDashing = false;
@@ -273,8 +298,23 @@ public class PlayerMovement : MonoBehaviour
             isGettingHurtFrame = true;
             isGettingHurtAnimation = true;
             isGettingHurt = false;
+
+            invincibilityCooldown = true;
+
             animator.SetTrigger("hurt");
         }
+        // Timer
+        if (invincibilityCooldown)
+            if (invincibilityFrameTimer < invincibilityFrameTimerAlive)
+            {
+                invincibilityFrameTimer += Time.deltaTime;
+            }
+            else if (invincibilityFrameTimer >= invincibilityFrameTimerAlive)
+            {
+                invincibilityFrameTimer = 0;
+                invincibilityCooldown = false;
+                isGettingHurtFrame = false;
+            }
 
         if (Input.GetKeyDown(KeyCode.M)) {
             //rb.AddForce(, ForceMode2D.Impulse);
@@ -488,6 +528,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void endAttacking()
     {
+        speed = 3f;
         isAttacking = false;
     }
 
@@ -498,7 +539,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void endStriking()
     {
-        isStriking = false;
+        speed = 3f;
+        isStriking = false;  
     }
 
     private void endFireballing()
@@ -524,12 +566,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void endIsGettingHurtAnimation()
     {
-        isGettingHurtAnimation = false;
+         isGettingHurtAnimation = false;
     }
 
     private void endIsGettingHurtFrame()
     {
-        isGettingHurtFrame = false;
+        // isGettingHurtFrame = false;
     }
 
     private void fireballing()
