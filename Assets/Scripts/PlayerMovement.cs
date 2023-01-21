@@ -330,12 +330,15 @@ public class PlayerMovement : MonoBehaviour
         {
             GameObject.Find("Player").GetComponent<PlayerStats>().saveStats();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        }
-            
+        }  
         else if (collision.gameObject.tag == "CaveExit")
         {
             GameObject.Find("Player").GetComponent<PlayerStats>().saveStats();
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex - 1);
+        }
+        else if (collision.gameObject.tag == "ExitToCredits")
+        {
+            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
 
@@ -411,7 +414,7 @@ public class PlayerMovement : MonoBehaviour
                     if (!objectsHit.Contains(hits[i][j].collider))
                     {
                         objectsHit.Add(hits[i][j].collider);
-                        hits[i][j].collider.GetComponent<enemy>().health -= (int)((float)(attackStrength)); // + this.gameObject.GetComponent<PlayerStats>().playerStrength 
+                        hits[i][j].collider.GetComponent<enemy>().health -= (int)((float)(attackStrength)) + (int)(GameObject.Find("Player").GetComponent<PlayerStats>().playerStrength * .5f); // + this.gameObject.GetComponent<PlayerStats>().playerStrength 
                     }
                     //Debug.Log(hits[i][j].collider.name);
                 }
