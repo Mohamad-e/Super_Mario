@@ -33,6 +33,7 @@ public class PlayerStats : MonoBehaviour
     public int playerStrength = 1;
     public int playerArmor = 1;
     public int playerIntelligence = 1;
+    public int bombCount = 0;
 
 
     //texts
@@ -45,6 +46,7 @@ public class PlayerStats : MonoBehaviour
     public TMP_Text attributePointsText;
     public TMP_Text specialPointsText;
     public TMP_Text levelUpText;
+    public TMP_Text bombCountText;
 
     //Audio
     public AudioSource confirmPointSound;
@@ -162,6 +164,7 @@ public class PlayerStats : MonoBehaviour
         intelligenceText.text = playerIntelligence.ToString();
         attributePointsText.text = attributePoints.ToString();
         specialPointsText.text = specialAttributePoints.ToString();
+        bombCountText.text = bombCount.ToString() + "x";
     }
 
     private void checkAttributes()
@@ -229,5 +232,15 @@ public class PlayerStats : MonoBehaviour
         maxMana = PlayerPrefs.GetFloat("MaxMana");
         currentExperience = PlayerPrefs.GetFloat("CurrentExp");
         experienceToNextLvl = PlayerPrefs.GetFloat("ExpNextLevel");
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Bomb")
+        {
+            bombCount++;
+            updateStats();
+            Destroy(collision.gameObject);
+        }
     }
 }

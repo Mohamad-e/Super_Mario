@@ -6,7 +6,7 @@ public class Fireball : MonoBehaviour
 {
     private float speed = 20;
     [SerializeField]
-    private int fireballDamage = 100;
+    private int fireballDamage = 30;
     // Update is called once per frame
     void Update()
     {
@@ -22,6 +22,6 @@ public class Fireball : MonoBehaviour
     {
         Destroy(gameObject);
         if(collision.collider.GetComponent<enemy>() != null)
-            collision.collider.GetComponent<enemy>().health -= fireballDamage;
+            collision.collider.GetComponent<enemy>().health -= fireballDamage + (int)(GameObject.Find("Player").GetComponent<PlayerStats>().playerIntelligence * .5f);
     }
 }

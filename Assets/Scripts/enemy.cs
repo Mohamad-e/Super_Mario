@@ -5,7 +5,7 @@ using UnityEngine;
 public class enemy : MonoBehaviour
 {
     public int health = 1000;
-
+    public int damage;
     //public GameObject fireball;
     //public Transform fireballSpawn;
 
@@ -37,7 +37,7 @@ public class enemy : MonoBehaviour
         {
             if (!collision.gameObject.GetComponent<PlayerMovement>().isGettingHurtFrame)
             {
-                collision.gameObject.GetComponent<PlayerStats>().currentHealth -= 10;
+                collision.gameObject.GetComponent<PlayerStats>().currentHealth -= damage - (int)(GameObject.Find("Player").GetComponent<PlayerStats>().playerArmor * .3f);
                 collision.gameObject.GetComponent<PlayerMovement>().isGettingHurt = true;
             }
         }

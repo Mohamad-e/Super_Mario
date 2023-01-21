@@ -10,6 +10,10 @@ public class Chest : MonoBehaviour
     public GameObject[] items;
     public float forceMultiplier;
 
+    public GameObject bomb;
+    public bool bombChest;
+    public bool respawnBomb;
+    
     // Update is called once per frame
     void Update()
     {
@@ -20,8 +24,15 @@ public class Chest : MonoBehaviour
             {
                 Instantiate(item, new Vector2(transform.position.x, transform.position.y + .5f), Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-.5f, .5f), 3) * forceMultiplier);
             }
+            Instantiate(bomb, new Vector2(transform.position.x, transform.position.y + .5f), Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-.5f, .5f), 3) * forceMultiplier);
             touched = false;
         }
+        if(GameObject.Find("Player").GetComponent<PlayerStats>().bombCount == 0 & respawnBomb)
+        {
+            Instantiate(bomb, new Vector2(transform.position.x, transform.position.y + .5f), Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-.5f, .5f), 3) * forceMultiplier);
+            respawnBomb = false;
+        }
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -30,7 +41,6 @@ public class Chest : MonoBehaviour
         {
             this.GetComponent<Collider2D>().enabled = false;
             animator.SetTrigger("open");
-            //animator.Play("ChestAnimation");
             touched = true;
         }
     }
