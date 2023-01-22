@@ -192,8 +192,6 @@ public class PlayerMovement : MonoBehaviour
                 speed = 0f;
             }
             attackSound.Play();
-
-
         }
 
         //jumpAttack
@@ -321,11 +319,6 @@ public class PlayerMovement : MonoBehaviour
                 invincibilityCooldown = false;
                 isGettingHurtFrame = false;
             }
-
-        if (Input.GetKeyDown(KeyCode.M)) {
-            //rb.AddForce(, ForceMode2D.Impulse);
-            rb.velocity = new Vector2(13, 3);
-        }
 
         //bomb
         if(Input.GetKeyDown(KeyCode.R))

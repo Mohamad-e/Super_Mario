@@ -17,4 +17,5 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Credits.unity
     guid: dedb0c7b37b65b74b8015fbf45fc1948
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 30225fa75c6c4df45a808c48ec75d806, type: 2}
