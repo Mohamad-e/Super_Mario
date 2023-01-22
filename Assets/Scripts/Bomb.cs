@@ -41,6 +41,18 @@ public class Bomb : MonoBehaviour
         }
     }
 
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (explosion == true)
+        {
+
+            if (collision.tag == "weakWall")
+            {
+                collision.GetComponent<weakWall>().explosion = true;
+            }
+        }
+    }
+
     private void DestoryBomb()
     {
         Destroy(gameObject);

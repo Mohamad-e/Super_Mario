@@ -36,7 +36,12 @@ public class Potions : MonoBehaviour
                     playerStats.mana += mana;
             }
             else
+            {
                 GameObject.Find("Player").GetComponent<PlayerStats>().attributePoints++;
+                GameObject.Find("Player").GetComponent<PlayerStats>().updateStats();
+            }
+                
+
             GameObject.Find("Player").GetComponent<PlayerMovement>().pickupSound.Play();
             Destroy(gameObject);
         }

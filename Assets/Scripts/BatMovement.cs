@@ -19,11 +19,15 @@ public class BatMovement : MonoBehaviour
         {
             transform.position = Vector2.MoveTowards(
                 transform.position,
-                new Vector2(targetPlayer.position.x, targetPlayer.position.y - .5f),
+                new Vector2(targetPlayer.position.x, targetPlayer.position.y),
                 speed * Time.deltaTime);
 
             anim.SetBool("moveToPlayer", true);
 
+        }
+        else
+        {
+            gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
         }
 
 

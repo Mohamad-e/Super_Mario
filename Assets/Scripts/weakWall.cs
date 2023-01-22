@@ -28,7 +28,7 @@ public class weakWall : MonoBehaviour
     {
         if (otherWallExplosion == true)
         {
-            Debug.Log(collision.collider.name);
+            //Debug.Log(collision.collider.name);
             if (collision.collider.tag == "weakWall")
             {
 
@@ -43,6 +43,8 @@ public class weakWall : MonoBehaviour
 
         }*/
     }
+
+
 
     private void destroyWall()
     {

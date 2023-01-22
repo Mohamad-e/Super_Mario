@@ -154,7 +154,7 @@ public class PlayerStats : MonoBehaviour
         updateStats();
     }
 
-    private void updateStats()
+    public void updateStats()
     {
         playerLevelText.text = playerLevel.ToString();
         healthText.text = maxHealth.ToString();

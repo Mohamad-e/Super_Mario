@@ -44,6 +44,8 @@ public class PlayerMovement : MonoBehaviour
     public bool isGettingHurtFrame = false;
     private bool invincibilityCooldown = false;
 
+    public bool respawnBomb;
+
     // Timer
     [SerializeField]
     private float strikeTimerAlive = 10.0f;
@@ -60,6 +62,7 @@ public class PlayerMovement : MonoBehaviour
 
     //Fireball
     public GameObject fireball;
+    public GameObject bomb;
     public Transform fireballSpawn;
 
 
@@ -116,7 +119,7 @@ public class PlayerMovement : MonoBehaviour
 
         
         //crouching
-        if(Input.GetKeyDown(KeyCode.S) && isGrounded && !isAttacking && !isDashing && !isStriking && !isFireballing && !isBlocking && !blockReady && !isParrying && !isGettingHurtAnimation)
+        /*if(Input.GetKeyDown(KeyCode.S) && isGrounded && !isAttacking && !isDashing && !isStriking && !isFireballing && !isBlocking && !blockReady && !isParrying && !isGettingHurtAnimation)
         {
             animator.SetBool("crouching", true);
             speed = 0;
@@ -127,7 +130,7 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("crouching", false);
             speed = 3f;
             isCrouching = false;
-        }
+        }*/
 
 
         //Jumping
@@ -141,11 +144,11 @@ public class PlayerMovement : MonoBehaviour
             hits[0] = Physics2D.Raycast(gameObject.transform.position, Vector2.down * raySize);
 
             Debug.DrawRay(gameObject.transform.position + (Vector3.left*0.25f), Vector2.down * raySize, Color.white, 5);
-            hits[1] = Physics2D.Raycast(gameObject.transform.position + (Vector3.left * 0.4f), Vector2.down * raySize);
+            hits[1] = Physics2D.Raycast(gameObject.transform.position + (Vector3.left * 0.25f), Vector2.down * raySize);
 
             Debug.DrawRay(gameObject.transform.position + (Vector3.right * 0.25f), Vector2.down * raySize, Color.white, 5);
-            hits[2] = Physics2D.Raycast(gameObject.transform.position + (Vector3.right * 0.4f), Vector2.down * raySize);
-
+            hits[2] = Physics2D.Raycast(gameObject.transform.position + (Vector3.right * 0.25f), Vector2.down * raySize);
+            
             bool onGround = false;
             for(int i = 0; i < hits.Length; i++)
             {
@@ -154,6 +157,7 @@ public class PlayerMovement : MonoBehaviour
       
                     if (hits[i].collider.tag == "ground")
                     {
+                        Debug.Log("raycast");
                         onGround = true;
                         break;
                     }
@@ -166,7 +170,7 @@ public class PlayerMovement : MonoBehaviour
                 doubleJump = true;
                 jumpSound.Play();
             }
-            onGround = false;
+            
         }
         //double Jump
         else if(Input.GetKeyDown(KeyCode.Space) && doubleJump && !isCrouching && !isBlocking && !blockReady && !isGettingHurtAnimation)
@@ -188,6 +192,8 @@ public class PlayerMovement : MonoBehaviour
                 speed = 0f;
             }
             attackSound.Play();
+
+
         }
 
         //jumpAttack
@@ -197,7 +203,7 @@ public class PlayerMovement : MonoBehaviour
         }*/
 
         //dashing
-        if (Input.GetKeyDown(KeyCode.L) && isGrounded && !isDashing && !isAttacking && !isStriking && !isCrouching && !isFireballing && !isBlocking && !blockReady && !isGettingHurtAnimation)
+        /*if (Input.GetKeyDown(KeyCode.L) && isGrounded && !isDashing && !isAttacking && !isStriking && !isCrouching && !isFireballing && !isBlocking && !blockReady && !isGettingHurtAnimation)
         {
             animator.SetTrigger("dashing");
             isDashing = true;
@@ -211,7 +217,7 @@ public class PlayerMovement : MonoBehaviour
                 //rb.velocity += new Vector2(-dashingPower, 0f);
                 rb.AddForce(-Vector2.right * dashingPower, ForceMode2D.Impulse);
             }
-        }
+        }*/
 
         //parrying + blocking
         if(Input.GetKeyDown(KeyCode.B) && !isDashing && !isAttacking && !isStriking && !isCrouching && !isFireballing && !isParrying && !isGettingHurtAnimation)
@@ -320,6 +326,31 @@ public class PlayerMovement : MonoBehaviour
             //rb.AddForce(, ForceMode2D.Impulse);
             rb.velocity = new Vector2(13, 3);
         }
+
+        //bomb
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            if (gameObject.GetComponent<PlayerStats>().bombCount > 0)
+            {
+                GameObject bombe = Instantiate(bomb, fireballSpawn.transform.position, transform.rotation);
+                if (facingRight)
+                {
+                    
+                    bombe.GetComponent<Rigidbody2D>().velocity = (new Vector2(1, 1)) * 5;
+                   
+                }else
+                {
+                    bombe.GetComponent<Rigidbody2D>().velocity = (new Vector2(-1, 1)) * 5;
+                }
+
+                gameObject.GetComponent<PlayerStats>().bombCount -= 1;
+                gameObject.GetComponent<PlayerStats>().updateStats();
+                if(gameObject.GetComponent<PlayerStats>().bombCount == 0)
+                {
+                    respawnBomb = true;
+                }
+            }
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -341,6 +372,7 @@ public class PlayerMovement : MonoBehaviour
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
+
 
     private void flip()
     {
@@ -410,11 +442,20 @@ public class PlayerMovement : MonoBehaviour
                 }
                 else if (hits[i][j].collider.tag == "Enemy")    
                 {
+
                     //Debug.Log("Hit enemy");
                     if (!objectsHit.Contains(hits[i][j].collider))
                     {
                         objectsHit.Add(hits[i][j].collider);
                         hits[i][j].collider.GetComponent<enemy>().health -= (int)((float)(attackStrength)) + (int)(GameObject.Find("Player").GetComponent<PlayerStats>().playerStrength * .5f); // + this.gameObject.GetComponent<PlayerStats>().playerStrength 
+                        if (facingRight)
+                        {
+                            hits[i][j].collider.gameObject.GetComponent<Rigidbody2D>().velocity = (new Vector2(1, 1)) ;
+                        }
+                        else
+                        {
+                            hits[i][j].collider.gameObject.GetComponent<Rigidbody2D>().velocity = (new Vector2(-1, 1));
+                        }
                     }
                     //Debug.Log(hits[i][j].collider.name);
                 }
@@ -480,6 +521,14 @@ public class PlayerMovement : MonoBehaviour
                     {
                         objectsHit.Add(hits[i][j].collider);
                         hits[i][j].collider.GetComponent<enemy>().health -= (int)((float)(strikeStrength)); // + this.gameObject.GetComponent<PlayerStats>().playerStrength 
+                        if (facingRight)
+                        {
+                            hits[i][j].collider.gameObject.GetComponent<Rigidbody2D>().velocity = (new Vector2(1, 1));
+                        }
+                        else
+                        {
+                            hits[i][j].collider.gameObject.GetComponent<Rigidbody2D>().velocity = (new Vector2(-1, 1));
+                        }
                     }
 
                     //Debug.Log(hits[i][j].collider.name);

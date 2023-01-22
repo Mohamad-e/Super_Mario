@@ -6,13 +6,13 @@ public class Chest : MonoBehaviour
 {
     public Animator animator;
     private bool touched = false;
+    private bool open = false;
 
     public GameObject[] items;
     public float forceMultiplier;
 
     public GameObject bomb;
     public bool bombChest;
-    public bool respawnBomb;
     
     // Update is called once per frame
     void Update()
@@ -20,20 +20,27 @@ public class Chest : MonoBehaviour
         //Spawn Items
         if (touched)
         {
-            foreach(GameObject item in items)
+            
+            foreach (GameObject item in items)
             {
                 Instantiate(item, new Vector2(transform.position.x, transform.position.y + .5f), Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-.5f, .5f), 3) * forceMultiplier);
             }
-            Instantiate(bomb, new Vector2(transform.position.x, transform.position.y + .5f), Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-.5f, .5f), 3) * forceMultiplier);
+
+            if (bombChest)
+            {
+                Instantiate(bomb, new Vector2(transform.position.x, transform.position.y + .5f), Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-.5f, .5f), 3) * forceMultiplier);
+            }
             touched = false;
-        }
-        if(GameObject.Find("Player").GetComponent<PlayerStats>().bombCount == 0 & respawnBomb)
-        {
-            Instantiate(bomb, new Vector2(transform.position.x, transform.position.y + .5f), Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-.5f, .5f), 3) * forceMultiplier);
-            respawnBomb = false;
+            open = true;
         }
 
-    }
+        if (GameObject.Find("Player").GetComponent<PlayerMovement>().respawnBomb && bombChest && open )
+        {
+            Debug.Log("bombchest2");
+            Instantiate(bomb, new Vector2(transform.position.x, transform.position.y + .5f), Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-.5f, .5f), 3) * forceMultiplier);
+            GameObject.Find("Player").GetComponent<PlayerMovement>().respawnBomb = false;
+        }
+}
 
     private void OnCollisionEnter2D(Collision2D collision)
     {

@@ -20,7 +20,6 @@ public class SlimeMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 displacement = (targetPlayer.position - transform.position).normalized;
         if(Vector3.Distance(targetPlayer.position, transform.position) <= distance)
         {
             transform.position = Vector2.MoveTowards(
