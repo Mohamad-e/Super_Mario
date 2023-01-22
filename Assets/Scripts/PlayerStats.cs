@@ -93,7 +93,7 @@ public class PlayerStats : MonoBehaviour
             playerLevel++;
             currentExperience = currentExperience - experienceToNextLvl;
             //change experience to next level
-            experienceToNextLvl += 20;
+            experienceToNextLvl += 10;
 
             //give attribute point and check for health/mana point
             attributePoints++;
